@@ -28,15 +28,13 @@
 
 //#include "dio_ext.h"
 #include "sx1236.h"
-#define SX1236_OOK_MODE              ((uint8_t)(0b01<<5))
-
 
 #define     DEBUG_SERIAL                    SD2
 #define     DEBUG_CHP                       ((BaseSequentialStream *) &DEBUG_SERIAL)
 
 #define     F_XOSC                          (32000000U)
 #define     F_STEP                          ((double)(61.03515625)) //  (Fxosc/2^19)
-#define     APP_CARRIER_FREQ                (437500000U)
+#define     APP_CARRIER_FREQ                (436500000U)
 #define     APP_FREQ_DEV                    (20000U)
 
 // #define     APP_BITRATE                     (4800)
@@ -107,7 +105,7 @@ static void init_tx_continuous(config_sx1236 * s)
 
     sx1236_init_state(&s->sx1236_state);
 
-    s->sx1236_state.RegOpMode          	= 0x00 | SX1236_LOW_FREQ_MODE | SX1236_OOK_MODE |  SX1236_TRANSMITTER_MODE ;
+    s->sx1236_state.RegOpMode          	= 0x00 | SX1236_LOW_FREQ_MODE | SX1236_FSK_MODE |  SX1236_TRANSMITTER_MODE ;
     //s->sx1236_state.RegOsc            = 0x00 | SX1236_OSC_DIV_8 ;		//FXOSC is diabled by default
     s->sx1236_state.RegPacketConfig2   	= 0x00 | SX1236_CONTINUOUS_MODE ;
 	s->sx1236_state.RegOokPeak   		= 0x08;				//disable syncronizer bit
@@ -149,23 +147,7 @@ static SerialConfig ser_cfg =
 
 /*
  * Only one device on SPI bus: sx1236
-
-static const SPIConfig spicfg =
-{
-    NULL,               // Operation complete callback
-    GPIOA,              // Slave select port
-    GPIOA_SPI1_NSS,     // Slave select pad
-    // SPI cr1 data (see 446 ref man.)
-    SPI_CR1_SPE     |   // SPI enable
-    SPI_CR1_MSTR    |   // Master
-    //SPI_CR1_BR_2    |
-    SPI_CR1_BR_1    |
-    SPI_CR1_BR_0   |       // fpclk/16  approx 5Mhz? BR = 0x011
-    SPI_CR1_SSM,
-    0, // SPI_CR2_SSOE,
-};
  */
-
 static const SPIConfig spicfg =
 {
     FALSE,
@@ -202,13 +184,13 @@ static void app_init(void)
 
     spiStart(&SPID1, &spicfg);
 
-    //dio_init();
-
     chprintf(DEBUG_CHP, "Reset sx1236\r\n");
     sx1236_reset() ;
 
 
 }
+
+
 
 static THD_WORKING_AREA(waThread_sx1236_tx, 512);
 static THD_FUNCTION(Thread_sx1236_tx, arg)
@@ -227,7 +209,8 @@ static THD_FUNCTION(Thread_sx1236_tx, arg)
 
 static void start_threads(void)
 {
-    	chThdCreateStatic(waThread_sx1236_tx,      sizeof(waThread_sx1236_tx),   NORMALPRIO, Thread_sx1236_tx, NULL);
+    //chThdCreateStatic(waThread_sx1236_dio,      sizeof(waThread_sx1236_dio),   NORMALPRIO, Thread_sx1236_dio, NULL);
+	chThdCreateStatic(waThread_sx1236_tx,      sizeof(waThread_sx1236_tx),   NORMALPRIO, Thread_sx1236_tx, NULL);
 }
 
 

@@ -5,7 +5,8 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  #USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -ggdb -std=gnu11
 endif
 
 # C specific options here (added to USE_OPT).
@@ -83,7 +84,7 @@ endif
 #
 
 # Define project name here
-PROJECT   = app_sx1236_OOK
+PROJECT   = app_sx1236_tx_cont
 
 # Define board here
 BOARD     = ST_NUCLEO64_F446RE
@@ -137,7 +138,7 @@ APP_SRCS = $(wildcard $(APP_ROOT)/*.c)
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(APP_SRCS)
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
