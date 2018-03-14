@@ -40,7 +40,7 @@
 #define     APP_CARRIER_FREQ                (436500000U)
 #define     APP_CARRIER_FREQ_GND            (435500000U)
 #define     APP_CARRIER_FREQ_SAT            (437500000U)
-#define     APP_FREQ_DEV                    (5000U)
+#define     APP_FREQ_DEV                    (10000U)
 
 // #define     APP_BITRATE                     (4800)
 #define     APP_BITRATE                     (1200U)
@@ -82,8 +82,8 @@
 #define     SX1236_SYNCVALUE8               ((uint8_t) (0xe7U))
 
 // Payload length
-#define     PAYLOAD_LENGTH                  ((uint8_t) (0x05U))
-#define     FIFO_THRESH                     ((uint8_t) (0x05U))
+#define     PAYLOAD_LENGTH                  ((uint8_t) (0x20U))
+#define     FIFO_THRESH                     ((uint8_t) (0x20U))
 
 // Structure to hold configuration for test
 static config_sx1236 dut_config ;
@@ -172,6 +172,7 @@ static void init_rx_packet(config_sx1236 * s)
     s->sx1236_state.RegPacketConfig1   	= 0x00 | SX1236_FIXED_PACKET | SX1236_CRC_ON ;
 	s->sx1236_state.RegPacketConfig2   	= 0x00 | SX1236_PACKET_MODE ;
 	s->sx1236_state.RegPayloadLength   	= 0x20;
+    s->sx1236_state.RegPaRamp   	    = s->sx1236_state.RegPaRamp|SX1236_GAUS_BT_03;
 	//s->sx1236_state.RegOokPeak   		= 0x08;				//disable syncronizer bit
 
 	sx1236_configure(&SPID1, s);
@@ -196,6 +197,7 @@ static void init_tx_packet(config_sx1236 * s)
     s->sx1236_state.RegPacketConfig1   	= 0x00 | SX1236_FIXED_PACKET | SX1236_CRC_ON ;
 	s->sx1236_state.RegPacketConfig2   	= 0x00 | SX1236_PACKET_MODE ;
 	s->sx1236_state.RegPayloadLength   	= 0x20;
+    s->sx1236_state.RegPaRamp   	    = s->sx1236_state.RegPaRamp|SX1236_GAUS_BT_03;
 	//s->sx1236_state.RegOokPeak   		= 0x08;				//disable syncronizer bit
 
 	sx1236_configure(&SPID2, s);
@@ -330,7 +332,8 @@ static THD_FUNCTION(Thread_sx1236_rx, arg)
     chRegSetThreadName("sx1236_dio");
 
     /* Enabling events on rising edges of the button line.*/
-    palEnableLineEvent(GPIOC_SX_DIO3, PAL_EVENT_MODE_RISING_EDGE);
+    //palEnableLineEvent(GPIOC_SX_DIO3, PAL_EVENT_MODE_RISING_EDGE);
+    palEnableLineEvent(GPIOC_SX_DIO3, PAL_EVENT_MODE_BOTH_EDGES);
 
     chprintf(DEBUG_CHP, "Thread started: %s\r\n", "sx1236_dio");
 
