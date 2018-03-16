@@ -34,11 +34,11 @@
 
 #define     F_XOSC                          (32000000U)
 #define     F_STEP                          ((double)(61.03515625)) //  (Fxosc/2^19)
-#define     APP_CARRIER_FREQ                (436500000U)
-#define     APP_FREQ_DEV                    (20000U)
+#define     APP_CARRIER_FREQ                (437500000U)
+#define     APP_FREQ_DEV                    (10000U)
 
 // #define     APP_BITRATE                     (4800)
-#define     APP_BITRATE                     (1200U)
+#define     APP_BITRATE                     (9600U)
 
 // RegPaConfig
 #define     PA_MAXPOWER                     ((uint8_t)(0x0))
@@ -108,7 +108,8 @@ static void init_tx_continuous(config_sx1236 * s)
     s->sx1236_state.RegOpMode          	= 0x00 | SX1236_LOW_FREQ_MODE | SX1236_FSK_MODE |  SX1236_TRANSMITTER_MODE ;
     //s->sx1236_state.RegOsc            = 0x00 | SX1236_OSC_DIV_8 ;		//FXOSC is diabled by default
     s->sx1236_state.RegPacketConfig2   	= 0x00 | SX1236_CONTINUOUS_MODE ;
-	s->sx1236_state.RegOokPeak   		= 0x08;				//disable syncronizer bit
+    s->sx1236_state.RegPaRamp   	    = s->sx1236_state.RegPaRamp|SX1236_GAUS_BT_03;
+	//s->sx1236_state.RegOokPeak   		= 0x08;				
 
 	sx1236_configure(&SPID1, s);
 	sx1236_print_regs(&SPID1);

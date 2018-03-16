@@ -35,6 +35,9 @@
 
 // RegPaRamp
 #define SX1236_NO_SHAPING            ((uint8_t)(0b00<<5))
+#define SX1236_GAUS_BT_10            ((uint8_t)(0b01<<5))
+#define SX1236_GAUS_BT_05            ((uint8_t)(0b10<<5))
+#define SX1236_GAUS_BT_03            ((uint8_t)(0b11<<5))
 
 
 // RegDioMapping1
