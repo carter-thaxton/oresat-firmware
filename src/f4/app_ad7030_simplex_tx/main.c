@@ -111,13 +111,23 @@ static void app_init(void)
 
 
     chprintf(DEBUG_CHP, "Configuring adf7030\r\n");
-    adf7030_phy_off(&SPID1);
-    chThdSleepMilliseconds(500);
+    //adf7030_phy_off(&SPID1);
+    //chThdSleepMilliseconds(500);
     adf7030_phy_cfg(&SPID1);
+    chThdSleepMilliseconds(2500);
+    adf7030_status(&SPID1);
     chThdSleepMilliseconds(500);
     adf7030_cfg(&SPID1) ;
+    chThdSleepMilliseconds(2500);
+    adf7030_status(&SPID1);
+    chThdSleepMilliseconds(500);
+    adf7030_phy_on(&SPID1);
+    chThdSleepMilliseconds(500);
+    adf7030_status(&SPID1);
     chThdSleepMilliseconds(500);
     adf7030_phy_tx(&SPID1);
+    chThdSleepMilliseconds(500);
+    adf7030_status(&SPID1);
 
 
 }

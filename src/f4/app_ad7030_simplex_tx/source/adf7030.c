@@ -42,11 +42,38 @@ const uint8_t Radio_Memory_Configuration[] = {
 void adf7030_cfg(SPIDriver * spip)
 {
 
+    uint8_t rx_buf;
 	spiSelect(spip);
 
 	spiStartSend(spip, sizeof(Radio_Memory_Configuration), Radio_Memory_Configuration);
 	while((*spip).state != SPI_READY) {}
 
+	spiStartReceive(spip, 1, &rx_buf);
+	while((*spip).state != SPI_READY) { }
+
+    chprintf(DEBUG_CHP, "\r\r config data 4th byte-- 0x%x --\r\n", Radio_Memory_Configuration[3]);
+    chprintf(DEBUG_CHP, "\r\r config return-- 0x%x --\r\n", rx_buf);
+	spiUnselect(spip);
+}
+
+
+/*
+ * Reports ADF7030 status over SPI
+ * ADF7030 software reference manual p 15
+ */
+void adf7030_status(SPIDriver * spip)
+{
+    uint8_t command_buf = AD_NOP;
+    uint8_t rx_buf;
+	spiSelect(spip);
+
+	spiStartSend(spip, 1, &command_buf);
+	while((*spip).state != SPI_READY) {}
+
+	spiStartReceive(spip, 1, &rx_buf);
+	while((*spip).state != SPI_READY) { }
+
+    chprintf(DEBUG_CHP, "\r\r radio status-- 0x%x --\r\n", rx_buf);
 	spiUnselect(spip);
 }
 
@@ -63,6 +90,24 @@ void adf7030_phy_off(SPIDriver * spip)
 	spiStartSend(spip, 1, &command_buf);
 	while((*spip).state != SPI_READY) {}
 
+    chprintf(DEBUG_CHP, "\r\r phy off-- 0x%x --\r\n", command_buf);
+	spiUnselect(spip);
+}
+
+
+/*
+ * ADF7030 state change functions - PHY_ON state
+ */
+void adf7030_phy_on(SPIDriver * spip)
+{
+    uint8_t command_buf = AD_CNM_1|AD_CMD_PHY_ON;
+
+	spiSelect(spip);
+
+	spiStartSend(spip, 1, &command_buf);
+	while((*spip).state != SPI_READY) {}
+
+    chprintf(DEBUG_CHP, "\r\r phy on-- 0x%x --\r\n", command_buf);
 	spiUnselect(spip);
 }
 
@@ -79,6 +124,7 @@ void adf7030_phy_cfg(SPIDriver * spip)
 	spiStartSend(spip, 1, &command_buf);
 	while((*spip).state != SPI_READY) {}
 
+    chprintf(DEBUG_CHP, "\r\r phy cfg-- 0x%x --\r\n", command_buf);
 	spiUnselect(spip);
 }
 
@@ -95,6 +141,7 @@ void adf7030_phy_rx(SPIDriver * spip)
 	spiStartSend(spip, 1, &command_buf);
 	while((*spip).state != SPI_READY) {}
 
+    chprintf(DEBUG_CHP, "\r\r phy rx-- 0x%x --\r\n", command_buf);
 	spiUnselect(spip);
 }
 
@@ -111,6 +158,7 @@ void adf7030_phy_tx(SPIDriver * spip)
 	spiStartSend(spip, 1, &command_buf);
 	while((*spip).state != SPI_READY) {}
 
+    chprintf(DEBUG_CHP, "\r\r phy tx-- 0x%x --\r\n", command_buf);
 	spiUnselect(spip);
 }
 
