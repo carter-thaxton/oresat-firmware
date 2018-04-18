@@ -1,3 +1,16 @@
+/*
+ * Generic state machine template that makes use of switch case statements
+ *
+ * Programmed by William Harrington
+ * wrh2.github.io
+ */
+
+#ifndef _FSM_H
+#define _FSM_H
+
+#include <stdbool.h>
+#include <stdint.h>
+
 typedef enum{
   STATE0,
   STATE1,
@@ -15,3 +28,5 @@ typedef struct{
 
 
 void serviceStateMachine(state_machine_t * fsm);
+
+#endif

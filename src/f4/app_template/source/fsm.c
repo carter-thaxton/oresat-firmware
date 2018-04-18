@@ -19,7 +19,7 @@ void serviceStateMachine(state_machine_t * fsm){
     {
 
       /* check the thing that is responsible for initiating a state transition */
-      if(some_important_flag)
+      if(fsm->some_important_flag)
       {
 
         /* transition to next state */
@@ -35,7 +35,7 @@ void serviceStateMachine(state_machine_t * fsm){
     {
 
       /* check the thing that is responsible for initiating a state transition */
-      if(!some_important_flag)
+      if(!fsm->some_important_flag)
       {
 
         /* transition to next state */
@@ -51,7 +51,7 @@ void serviceStateMachine(state_machine_t * fsm){
     {
 
       /* check the thing that is responsible for initiating a state transition */
-      if(some_important_flag)
+      if(fsm->some_important_flag)
       {
 
         /* transition to next state */
