@@ -124,30 +124,35 @@ static void app_init(void)
 
     adf7030_phy_off(&SPID1);
     chThdSleepMilliseconds(500);
+    adf7030_status(&SPID1);
     adf7030_read_status_reg(&SPID1);
 
-    adf7030_cfg(&SPID1) ;
+    adf7030_cfg(&SPID1);
+    //adf7030_write_address(&SPID1, (uint32_t) (0x20000548), (uint32_t) (0x00000200));
+    adf7030_status(&SPID1);
     chThdSleepMilliseconds(2500);
-    adf7030_read_address(&SPID1, (uint32_t) (0x200002F0));
 
     adf7030_phy_cfg(&SPID1);
     //adf7030_read_status_reg(&SPID1);
-    //chThdSleepMilliseconds(2500);
-    //adf7030_read_address(&SPID1, (uint32_t) (0x200002EC));
-    //adf7030_write_address(&SPID1, (uint32_t) (0x200002EC), (uint32_t) (0x19F533E0));
+    chThdSleepMilliseconds(2500);
+    adf7030_read_address(&SPID1, (uint32_t) (0x20000548));
     //adf7030_read_address(&SPID1, (uint32_t) (0x200002EC));
     //adf7030_read_address(&SPID1, (uint32_t) (0x2000031C));
     //adf7030_write_address(&SPID1, (uint32_t) (0x20000548), (uint32_t) (0x00000100));
     //adf7030_read_address(&SPID1, (uint32_t) (0x20000548));
-    //adf7030_status(&SPID1);
-    //adf7030_read_status_reg(&SPID1);
+    adf7030_status(&SPID1);
+    adf7030_read_status_reg(&SPID1);
 
 
-    //adf7030_phy_on(&SPID1);
-    //chThdSleepMilliseconds(500);
-    //adf7030_status(&SPID1);
-    //chThdSleepMilliseconds(500);
-    //adf7030_read_status_reg(&SPID1);
+    adf7030_phy_off(&SPID1);
+    chThdSleepMilliseconds(500);
+    adf7030_status(&SPID1);
+    adf7030_read_status_reg(&SPID1);
+
+    adf7030_phy_on(&SPID1);
+    chThdSleepMilliseconds(500);
+    adf7030_status(&SPID1);
+    adf7030_read_status_reg(&SPID1);
 
     //adf7030_phy_rx(&SPID1);
     //adf7030_read_status_reg(&SPID1);
@@ -156,20 +161,23 @@ static void app_init(void)
     //chThdSleepMilliseconds(500);
     //adf7030_status(&SPID1);
     //adf7030_read_status_reg(&SPID1);
-    //adf7030_write_packet(&SPID1);
+    adf7030_write_packet(&SPID1);
 
-    //adf7030_phy_tx(&SPID1);
+    adf7030_phy_tx(&SPID1);
+    adf7030_read_status_reg(&SPID1);
+    adf7030_status(&SPID1);
     //adf7030_write_packet(&SPID1);
 
 	while (true)
     {
-      chThdSleepMilliseconds(5000);
-      chprintf(DEBUG_CHP, ".\n\n\r\n");
-      //adf7030_write_packet(&SPID1);
-      //adf7030_phy_tx(&SPID1);
+      chThdSleepMilliseconds(1000);
+      chprintf(DEBUG_CHP, ".\n\r\n");
+      adf7030_write_packet(&SPID1);
+      adf7030_phy_tx(&SPID1);
+      chThdSleepMilliseconds(1000);
       //adf7030_read_status_reg(&SPID1);
       //chThdSleepMilliseconds(500);
-      //adf7030_read_status_reg(&SPID1);
+      adf7030_read_status_reg(&SPID1);
       adf7030_status(&SPID1);
     }
 

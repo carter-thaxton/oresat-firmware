@@ -98,6 +98,16 @@ void adf7030_cfg(SPIDriver * spip)
 	spiStartSend(spip, sizeof(cfg_buf11), cfg_buf11);
 	while((*spip).state != SPI_READY) {}
 	spiUnselect(spip);
+
+	spiSelect(spip);
+	spiStartSend(spip, sizeof(cfg_buf12), cfg_buf12);
+	while((*spip).state != SPI_READY) {}
+	spiUnselect(spip);
+
+	spiSelect(spip);
+	spiStartSend(spip, sizeof(cfg_buf13), cfg_buf13);
+	while((*spip).state != SPI_READY) {}
+	spiUnselect(spip);
 }
 
 
@@ -105,7 +115,7 @@ void adf7030_cfg(SPIDriver * spip)
  * Reports ADF7030 status over SPI
  * ADF7030 software reference manual p 15
  */
-void adf7030_status(SPIDriver * spip)
+uint8_t adf7030_status(SPIDriver * spip)
 {
     uint8_t command_buf = AD_NOP;
     uint8_t rx_buf;
@@ -117,8 +127,10 @@ void adf7030_status(SPIDriver * spip)
 	spiStartReceive(spip, 1, &rx_buf);
 	while((*spip).state != SPI_READY) { }
 
-    chprintf(DEBUG_CHP, "\r\r radio status-- 0x%x --\r\n", rx_buf);
 	spiUnselect(spip);
+
+    chprintf(DEBUG_CHP, "\r\r radio status-- 0x%x --\r\n", rx_buf);
+    return rx_buf;
 }
 
 
@@ -252,7 +264,7 @@ void adf7030_read_status_reg(SPIDriver * spip)
 	spiStartReceive(spip, 5, rx_buf);
 	while((*spip).state != SPI_READY) { }
 
-    chprintf(DEBUG_CHP, "\r\r radio status register content-- 0x%x %x %x %x %x --\r\n", rx_buf[0],rx_buf[1],rx_buf[2],rx_buf[3],rx_buf[4]);
+    chprintf(DEBUG_CHP, "\r\r radio status register content-- 0x%x %x %x %x --\r\n", rx_buf[1],rx_buf[2],rx_buf[3],rx_buf[4]);
 	spiUnselect(spip);
 }
 
@@ -292,14 +304,14 @@ void adf7030_write_packet(SPIDriver * spip)
     command_buf[25] = 21;
     command_buf[26] = 22;
     command_buf[27] = 23;
-    command_buf[28] = 24;
-    command_buf[29] = 25;
-    command_buf[30] = 26;
-    command_buf[31] = 27;
+    //command_buf[28] = 24;
+    //command_buf[29] = 25;
+    //command_buf[30] = 26;
+    //command_buf[31] = 27;
 
 
 
-    //chprintf(DEBUG_CHP, "\r\r request-- 0x%x --\r\n", AD_PACKET_MEMORY);
+    chprintf(DEBUG_CHP, "\r\r request-- 0x%x --\r\n", AD_WRITE_BLK_LADR);
     //chprintf(DEBUG_CHP, "\r\r request-- 0x%x %x %x %x %x %x --\r\n", command_buf[0],command_buf[1],command_buf[2],command_buf[3],command_buf[4],command_buf[5]);
 
 	spiSelect(spip);
@@ -338,7 +350,7 @@ void adf7030_read_address(SPIDriver * spip, uint32_t address)
 	spiStartReceive(spip, 5, rx_buf);
 	while((*spip).state != SPI_READY) { }
 
-    chprintf(DEBUG_CHP, "\r\r radio address 0x%x content : 0x%x %x %x %x %x --\r\n",address, rx_buf[0],rx_buf[1],rx_buf[2],rx_buf[3],rx_buf[4]);
+    chprintf(DEBUG_CHP, "\r\r radio address 0x%x content : 0x%x %x %x %x --\r\n",address,rx_buf[1],rx_buf[2],rx_buf[3],rx_buf[4]);
 	spiUnselect(spip);
 }
 

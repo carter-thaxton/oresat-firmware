@@ -116,7 +116,7 @@
  * ADF7030 function definitions
  */
 void adf7030_cfg(SPIDriver * spip);
-void adf7030_status(SPIDriver * spip);
+uint8_t adf7030_status(SPIDriver * spip);
 void adf7030_phy_sleep(SPIDriver * spip);
 void adf7030_phy_off(SPIDriver * spip);
 void adf7030_phy_on(SPIDriver * spip);
