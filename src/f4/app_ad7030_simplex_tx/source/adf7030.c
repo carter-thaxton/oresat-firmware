@@ -25,7 +25,7 @@
 #include "chprintf.h"
 
 #include "adf7030.h"
-#include "cfg_pckt.h"
+#include "defaults.h"
 
 /*
  * ADF7030 saving contents of the configuration file
