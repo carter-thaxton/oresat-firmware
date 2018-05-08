@@ -84,7 +84,7 @@ endif
 #
 
 # Define project name here
-PROJECT   = app_adf7030_FullDuplex_ground
+PROJECT   = app_ticc1310_simplex_tx
 
 # Define board here
 BOARD     = ST_NUCLEO64_F446RE

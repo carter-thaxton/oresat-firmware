@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--  This file conforms to the DTD xdc/bld/build.dtd -->
+<package name="configPkg" version="" producerId="undefined">
+    <units>
+    </units>
+    <sources>
+        <srcFile name="package/cfg/release_pm3g.c"/>
+    </sources>
+    <configscripts>
+        <srcFile name="C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/release.cfg"/>
+    </configscripts>
+    <makefiles>
+        <srcFile name="package.mak" src="package.bld"/>
+        <srcFile name="package/package.xdc.dep" src="package.xdc"/>
+        <srcFile name="package/cfg/release_pm3g.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release_pm3g.om3g.dep" src="package/cfg/release_pm3g.c"/>
+        <srcFile name="package/cfg/release_pm3g.dep" src="package/cfg/release_pm3g.cfg"/>
+        <srcFile name="package/cfg/release.xm3g.mak" src="package.bld"/>
+        <srcFile name="package/rel/configPkg.tar.dep" src="package/rel/configPkg.xdc.inc"/>
+    </makefiles>
+    <targets>
+        <target name="gnu.targets.arm.M3"
+            version="gnu.targets.arm.M3{1,0,7.2,1"
+            rawVersion="7.2.1"
+            platform="ti.platforms.tiva:TM4C1294NCPDT"
+            isa="v7M"
+            suffix="m3g"
+            rootDir="C:/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major-win32"
+            os="undefined"
+            rts="gnu.targets.arm.rtsv7M">
+            <model endian="little"
+                codeModel="thumb2"
+                dataModel="undefined"/>
+        </target>
+    </targets>
+    <libraries>
+    </libraries>
+    <configurations>
+    <configuration name="release"
+        pname="release.pm3g"
+        target="gnu.targets.arm.M3"
+        platform="ti.platforms.simplelink:CC1310F128"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release_pm3g.cfg"
+        xCfgPrefix="package/cfg/release_pm3g"
+        cfgScript="C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/release.cfg"
+        cfgArgs="null"
+        />
+    </configurations>
+    <executables>
+    <executable name="release"
+        pname="release.xm3g"
+        target="gnu.targets.arm.M3"
+        platform="ti.platforms.simplelink:CC1310F128"
+        profile="release"
+        xCfgScript="package/cfg/release_pm3g.cfg"
+        xCfgPrefix="package/cfg/release_pm3g"
+        cfgScript="C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/release.cfg"
+        cfgArgs="null"
+        />
+    </executables>
+    <tests>
+    <test exeName="release.xm3g"
+        args=""
+        groupName="release.xm3g"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    </tests>
+    <releases relDir="package/rel/">
+    <release name="configPkg"
+        pname="configPkg.tar"
+        label="default"
+    >
+        <file name="package/package.bld.xml"/>
+        <file name="package/build.cfg"/>
+        <file name="package/package.xdc.inc"/>
+    </release>
+    </releases>
+    <repositories>
+    </repositories>
+</package>
