@@ -81,16 +81,6 @@ static const SPIConfig spicfg_tx =
     0, // SPI_CR2_SSOE,
 };
 
-void CC1310_reset(void)
-{
-	palSetPad(GPIOA, GPIOA_SEMTECH_RST);
-	chThdSleepMilliseconds(10);
-	palClearPad(GPIOA, GPIOA_SEMTECH_RST);
-	chThdSleepMilliseconds(10);
-	palSetPad(GPIOA, GPIOA_SEMTECH_RST);
-	chThdSleepMilliseconds(10);  // Let chip reset - conservative
-}
-
 
 /*
  * Initialize the SPI drivers and configure the adf7030 chips
@@ -112,8 +102,7 @@ static void app_init(void)
              , version_info.hardware.id_center
              , version_info.hardware.id_low
             );
-    
-    CC1310_reset();		
+		
 	
     spiStart(&SPID1, &spicfg_rx);
     //spiStart(&SPID2, &spicfg_tx);

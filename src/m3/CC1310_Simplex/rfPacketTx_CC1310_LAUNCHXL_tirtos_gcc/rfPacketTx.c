@@ -248,13 +248,16 @@ void *slaveThread(void *arg0)
        while(1);
    }
 
+   /* Sleep for PACKET_INTERVAL us */
+   usleep(5000000);
 
    /*
     * Open SPI as slave in callback mode; callback mode is used to allow us to
     * configure the transfer & then set Board_SPI_SLAVE_READY high.
     */
    SPI_Params_init(&spiParams);
-   spiParams.frameFormat = SPI_POL0_PHA1;
+   //spiParams.frameFormat = SPI_POL0_PHA1;
+   spiParams.frameFormat = SPI_POL1_PHA1;
    spiParams.mode = SPI_SLAVE;
    spiParams.transferCallbackFxn = transferCompleteFxn;
    spiParams.transferMode = SPI_MODE_CALLBACK;
@@ -264,14 +267,15 @@ void *slaveThread(void *arg0)
        while (1);
    }
    else {
-       Display_printf(display, 0, 0, "Slave SPI initialized\n");
+       //Display_printf(display, 0, 0, "Slave SPI initialized\n");
    }
 
    /* Copy message to transmit buffer */
    strncpy((char *) slaveTxBuffer, SLAVE_MSG, SPI_MSG_LENGTH);
-   //SPI_close(slaveSpi);
+   SPI_close(slaveSpi);
+   usleep(5000000);
    for (i = 0; i < MAX_LOOP; i++) {
-       //slaveSpi = SPI_open(Board_SPI_SLAVE, &spiParams);
+       slaveSpi = SPI_open(Board_SPI_SLAVE, &spiParams);
        //strncpy((char *) slaveTxBuffer, SLAVE_MSG, SPI_MSG_LENGTH);
        /* Initialize slave SPI transaction structure */
        slaveTxBuffer[sizeof(SLAVE_MSG) - 1] = (i % 10) + '0';
@@ -320,14 +324,14 @@ void *slaveThread(void *arg0)
                }
                radioTxFxn(tx_packet);
            }*/
-           //SPI_close(slaveSpi);
+           SPI_close(slaveSpi);
        }
        else {
            Display_printf(display, 0, 0, "Unsuccessful slave SPI transfer");
        }
    }
 
-   SPI_close(slaveSpi);
+   //SPI_close(slaveSpi);
 
    /* Example complete - set pins to a known state */
    GPIO_setConfig(Board_SPI_MASTER_READY, GPIO_CFG_OUTPUT | GPIO_CFG_OUT_LOW);

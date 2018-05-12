@@ -2,14 +2,10 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-SHELL = cmd.exe
-
-CG_TOOL_ROOT := C:/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major-win32
-
-GEN_OPTS += C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/compiler.opt
-GEN_OPTS__FLAG := @"C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/compiler.opt"
-GEN_CMDS += C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/linker.cmd
-GEN_CMDS__FLAG := -Wl,-T"C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/linker.cmd"
+GEN_OPTS += /home/malay/Documents/ORESAT/mygit/oresat-firmware/src/m3/CC1310_Simplex/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/compiler.opt
+GEN_OPTS__FLAG := @"/home/malay/Documents/ORESAT/mygit/oresat-firmware/src/m3/CC1310_Simplex/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/compiler.opt"
+GEN_CMDS += /home/malay/Documents/ORESAT/mygit/oresat-firmware/src/m3/CC1310_Simplex/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/linker.cmd
+GEN_CMDS__FLAG := -Wl,-T"/home/malay/Documents/ORESAT/mygit/oresat-firmware/src/m3/CC1310_Simplex/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/configPkg/linker.cmd"
 
 ORDERED_OBJS += \
 "./CC1310_LAUNCHXL.o" \
@@ -19,13 +15,13 @@ ORDERED_OBJS += \
 "./rfPacketRx.o" \
 "./smartrf_settings/smartrf_settings.o" \
 -Wl,-T"../CC1310_LAUNCHXL_TIRTOS.lds" \
+$(GEN_CMDS__FLAG) \
 -l:display.am3g \
 -l:grlib.a \
 -l:rf_multiMode_cc13x0.am3g \
 -l:drivers_cc13x0.am3g \
 -l:pdm_cc13x0.am3g \
 -l:dpl_cc13x0.am3g \
-$(GEN_CMDS__FLAG) \
 -l:driverlib.lib \
 -lgcc \
 -lc \
@@ -34,8 +30,8 @@ $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init
 
-RM := DEL /F
-RMDIR := RMDIR /S/Q
+RM := rm -rf
+RMDIR := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
@@ -156,34 +152,33 @@ all: $(OBJS) $(LDS_SRCS) $(GEN_CMDS)
 	@$(MAKE) --no-print-directory -Onone "rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.out"
 
 dependents:
-	-cd C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug && $(MAKE) all
+	-cd /home/malay/Documents/ORESAT/mygit/oresat-firmware/src/m3/CC1310_Simplex/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug && $(MAKE) clean all
 
 # Tool invocations
-rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.out: $(OBJS) $(LDS_SRCS) $(GEN_CMDS) C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a
-	@echo 'Building target: "$@"'
+rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.out: $(OBJS) $(LDS_SRCS) $(GEN_CMDS) /home/malay/Documents/ORESAT/mygit/oresat-firmware/src/m3/CC1310_Simplex/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a
+	@echo 'Building target: $@'
 	@echo 'Invoking: GNU Linker'
-	"C:/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major-win32/bin/arm-none-eabi-gcc.exe" -DDeviceFamily_CC13X0 -DCCFG_FORCE_VDDR_HH=0 -ffunction-sections -fdata-sections -g -gdwarf-3 -gstrict-dwarf -Wall -std=c99 -march=armv7-m -mthumb -Wl,-Map,"rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.map" -nostartfiles -static -Wl,--gc-sections -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/display/lib" -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/grlib/lib/gcc/m3" -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/drivers/rf/lib" -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/drivers/lib" -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/drivers/pdm/lib" -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/kernel/tirtos/packages/ti/dpl/lib" -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/devices/cc13x0/driverlib/bin/gcc" -L"C:/ti/simplelink_cc13x0_sdk_2_10_00_36/kernel/tirtos/packages/gnu/targets/arm/libs/install-native/arm-none-eabi/lib/thumb/v7-m" -L"C:/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major-win32/arm-none-eabi/lib" -march=armv7-m -mthumb --specs=nano.specs -o"rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.out" $(ORDERED_OBJS)
-	@echo 'Finished building target: "$@"'
+	"" -Wl,-Map,"rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.map" -nostartfiles -static -Wl,--gc-sections -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/display/lib" -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/grlib/lib/gcc/m3" -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/drivers/rf/lib" -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/drivers/lib" -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/drivers/pdm/lib" -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/kernel/tirtos/packages/ti/dpl/lib" -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/source/ti/devices/cc13x0/driverlib/bin/gcc" -L"/home/malay/ti/simplelink_cc13x0_sdk_2_10_00_36/kernel/tirtos/packages/gnu/targets/arm/libs/install-native/arm-none-eabi/lib/thumb/v7-m" -L"/arm-none-eabi/lib" -march=armv7-m -mthumb --specs=nano.specs -o"rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.out" $(ORDERED_OBJS)
+	@echo 'Finished building target: $@'
 	@echo ' '
 
 rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.hex: $(EXE_OUTPUTS)
-	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: GNU Objcopy Utility'
-	"C:/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major-win32/bin/arm-none-eabi-objcopy.exe"  $(EXE_OUTPUTS__QUOTED) "rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.hex"
-	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
+	""  $(EXE_OUTPUTS__QUOTED) "rfPacketRx_CC1310_LAUNCHXL_tirtos_gcc.hex"
+	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "CC1310_LAUNCHXL.o" "RFQueue.o" "ccfg.o" "main_tirtos.o" "rfPacketRx.o" "smartrf_settings\smartrf_settings.o" 
-	-$(RM) "CC1310_LAUNCHXL.d" "RFQueue.d" "ccfg.d" "main_tirtos.d" "rfPacketRx.d" "smartrf_settings\smartrf_settings.d" 
+	-$(RM) "CC1310_LAUNCHXL.o" "RFQueue.o" "ccfg.o" "main_tirtos.o" "rfPacketRx.o" "smartrf_settings/smartrf_settings.o" 
+	-$(RM) "CC1310_LAUNCHXL.d" "RFQueue.d" "ccfg.d" "main_tirtos.d" "rfPacketRx.d" "smartrf_settings/smartrf_settings.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
-C:/Users/Malay/workspace_v8/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a:
+/home/malay/Documents/ORESAT/mygit/oresat-firmware/src/m3/CC1310_Simplex/tirtos_builds_CC1310_LAUNCHXL_release_gcc/Debug/libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a:
 
 -include ../makefile.targets
 

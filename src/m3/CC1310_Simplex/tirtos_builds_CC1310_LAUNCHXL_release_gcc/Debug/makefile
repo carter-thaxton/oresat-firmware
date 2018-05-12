@@ -2,10 +2,6 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-SHELL = cmd.exe
-
-CG_TOOL_ROOT := C:/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major-win32
-
 GEN_OPTS__FLAG := @"configPkg/compiler.opt"
 GEN_CMDS__FLAG := "configPkg/linker.cmd"
 
@@ -13,8 +9,8 @@ ORDERED_OBJS += \
 
 -include ../makefile.init
 
-RM := DEL /F
-RMDIR := RMDIR /S/Q
+RM := rm -rf
+RMDIR := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
@@ -133,10 +129,10 @@ main-build: libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a
 # Tool invocations
 libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a: $(OBJS) $(O_SRCS)
 ifneq ($(strip $(ORDERED_OBJS)),)
-	@echo 'Building target: "$@"'
+	@echo 'Building target: $@'
 	@echo 'Invoking: GNU Librarian'
-	"C:/ti/ccsv8/tools/compiler/gcc-arm-none-eabi-7-2017-q4-major-win32/bin/arm-none-eabi-ar.exe" -r "libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a" $(ORDERED_OBJS)
-	@echo 'Finished building target: "$@"'
+	"" -r "libtirtos_builds_CC1310_LAUNCHXL_release_gcc.a" $(ORDERED_OBJS)
+	@echo 'Finished building target: $@'
 	@echo ' '
 endif
 
