@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 #define OPENLOOP
-
+//#define CONFIGURE
 #define THREAD_SIZE	(1<<7)
 
 #define DEBUG_SERIAL SD2
@@ -17,6 +17,15 @@
 #define SCALE			10
 #define STEPS			360 
 #define STRETCH		1
+
+#define STEP_SIZE 1
+#define SKIP      1
+
+#define COIL_NUM 6
+
+#define ENCODER_MAX (1<<14)
+#define ENCODER_MIN 0
+#define ENCODER_CHUNK_SIZE 2730
 
 #define PWM_TIMER_FREQ	48e6 // Hz
 
