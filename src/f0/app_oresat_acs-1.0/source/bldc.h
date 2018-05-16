@@ -7,14 +7,14 @@
 
 #include <unistd.h>
 
-#define OPENLOOP
+//#define OPENLOOP
 //#define CONFIGURE
 #define THREAD_SIZE	(1<<7)
 
 #define DEBUG_SERIAL SD2
 #define DEBUG_CHP ((BaseSequentialStream *) &DEBUG_SERIAL)
 
-#define SCALE			10
+#define SCALE			2
 #define STEPS			360 
 #define STRETCH		1
 
