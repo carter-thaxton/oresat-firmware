@@ -2,7 +2,7 @@
 
 This is a test of the Doxygen automatic documentation generator.
 Everything in the README.md will show up on GitHub, and will also
-be used as the main page of the Doxygen documenation HTML files.
+be used as the main page of the Doxygen documentation HTML files.
 
 ---------------------
 ## Here is some random documentation
