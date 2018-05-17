@@ -1,12 +1,15 @@
 # ACS Doxygen test
 
 This is a test of the Doxygen automatic documentation generator.
+Everything in the README.md will show up on GitHub, and will also
+be used as the main page of the Doxygen documenation HTML files.
 
 ---------------------
 ## Here is some random documentation
 
-blarg
-blarg2
+-blarg
+-blarg2
+-blarg3
 
 ---------------------
 ## Here is some relevant documentation.
