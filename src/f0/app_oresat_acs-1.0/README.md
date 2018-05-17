@@ -2,11 +2,14 @@
 
 This is a test of the Doxygen automatic documentation generator.
 
-To create a new app, simply copy the app_template directory and name it whatever you like.
+---------------------
+Here is some random documentation
 
-```
-cp -R app_template app_<name>
-```
+blarg
+blarg2
+
+---------------------
+Here is some relevant documentation.
 
 If building for a specific board, update the `BOARD =` line to the board
 defined in the `boards` directory
