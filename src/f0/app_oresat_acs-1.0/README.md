@@ -5,14 +5,16 @@ Everything in the README.md will show up on GitHub, and will also
 be used as the main page of the Doxygen documentation HTML files.
 
 ---------------------
-## Here is some random documentation
+## How to update documentation
 
--blarg
--blarg2
--blarg3
+run this command from this directory:
+```
+doxygen Doxyfile
+```
+
 
 ---------------------
-## Here is some relevant documentation.
+## Here is some other relevant documentation.
 
 If building for a specific board, update the `BOARD =` line to the board
 defined in the `boards` directory
