@@ -3,13 +3,13 @@
 This is a test of the Doxygen automatic documentation generator.
 
 ---------------------
-Here is some random documentation
+## Here is some random documentation
 
 blarg
 blarg2
 
 ---------------------
-Here is some relevant documentation.
+## Here is some relevant documentation.
 
 If building for a specific board, update the `BOARD =` line to the board
 defined in the `boards` directory
