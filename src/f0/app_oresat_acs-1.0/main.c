@@ -14,60 +14,45 @@
     limitations under the License.
 */
 
-/*
- *	OreSat: Attitude Control System
- *	Portland State Aerospace Society (PSAS)
- *	
- *  // be wery wery quiet i'm hunting wabbits...
- *
- *	// add your name if you code things
- *	// and you are paying attention
- *	// and you want your code things in
- *	// space 
- *	
- *	// o_0
- *
- *	Chad Coates	
- *
- */
-
 //=== ChibiOS header files
 #include "ch.h"
 #include "hal.h"
+//#include "chprintf.h"
 
 //=== Project header files
-#include "oresat.h"
 #include "acs.h"
 
-ACSdata data;
-//uint8_t data[8];
+ACS acs = {};
 
-static SerialConfig ser_cfg = {
+//=== Serial configuration
+static SerialConfig ser_cfg ={
 	115200,     //Baud rate
 	0,          //
 	0,          //
 	0,          //
 };
 
-static void app_init(void){
-	acsInit();	 
-	canRPDOObjectInit(CAN_PDO_1,CAN_ID_DEFAULT,8,data.acs);
-//	initTPDO();
-
-	sdStart(&SD2,&ser_cfg); // Start up debug output
+static void app_init(void) {
+	//=== App initialization
+	acsInit(&acs);
+	canRPDOObjectInit(CAN_PDO_1,CAN_ID_DEFAULT,CAN_BUF_SIZE,acs.can_buf.recv);
+	canTPDOObjectInit(CAN_PDO_1,CAN_ID_DEFAULT,0,0,CAN_BUF_SIZE,acs.can_buf.send);
+	// Start up debug output
+	sdStart(&SD2, &ser_cfg);
 }
 
-static void app_main(void){
-//*
+static void app_main(void) {
+  //=== Start application threads
+
+  //Example thread creation
 	chThdCreateStatic(
 		wa_acsThread,
 		sizeof(wa_acsThread), 
 		NORMALPRIO, 
 		acsThread, 
-		NULL
+		&acs	
 	);
-//*/
-//*
+/*
 	chThdCreateStatic(
 		wa_spiThread,
 		sizeof(wa_spiThread),
@@ -76,21 +61,19 @@ static void app_main(void){
 		NULL
 	);
 //*/
-	while(true){
+	while (true){
 		chThdSleepMilliseconds(1000);
 	}
 }
 
-int main(void) {
+int main(void){
 	halInit();
 	chSysInit();
-	
 	oresat_init(CAN_NODE);
-	
+
+	// Initialize and start app
 	app_init();
 	app_main();
-	
+
 	return 0;
 }
-
-//! @}

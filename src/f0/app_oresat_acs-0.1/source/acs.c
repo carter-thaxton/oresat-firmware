@@ -9,15 +9,21 @@ THD_FUNCTION(acsThread,arg) {
   (void)arg;
   chRegSetThreadName("acsThread");
 
-	bldcStart();
-
-  while (!chThdShouldTerminateX()) {
-	//*
-		palClearLine(LINE_LED_GREEN);
-		chThdSleepMilliseconds(500);
-		palSetLine(LINE_LED_GREEN);
-		chThdSleepMilliseconds(500);
-	//*/
+  while(!chThdShouldTerminateX()){
+		switch(bldc.data->recv[0]){
+			case 0:
+				break;
+			case 1:
+				bldcStart();
+				break;
+			case 2:
+				bldcStop();
+				break;
+			default:
+				break;
+		}
+		memcpy(bldc.data->send,bldc.data->recv,CAN_BUF);	
+		chThdSleepMilliseconds(100);
   }
 }
 
@@ -41,13 +47,12 @@ THD_FUNCTION(spiThread,arg){
 		bldc.position = 0x3FFF & rxbuf[0];
 	 
 		step = bldc.position*360/(1<<14);
-		chprintf(DEBUG_CHP,"enc pos: %u \n", bldc.position);        
+		chprintf(DEBUG_CHP,"enc pos: %u \n",bldc.position);        
 		chprintf(DEBUG_CHP,"phase 1: %u \n", step);     
 		step = (step + bldc.phase_shift)%360;
-		chprintf(DEBUG_CHP,"phase 2: %u \n", step);     
+		chprintf(DEBUG_CHP,"phase 2: %u \n",step);     
 		step = (step + bldc.phase_shift)%360;
-		chprintf(DEBUG_CHP,"phase 3: %u \n\n", step);     
-		//chprintf(DEBUG_CHP,"Decimal: %u \n", encoder_val);        
+		chprintf(DEBUG_CHP,"phase 3: %u \n\n",step);     
 
 		chThdSleepMilliseconds(100);
   }
@@ -60,12 +65,12 @@ THD_FUNCTION(spiThread,arg){
 static void pwmpcb(PWMDriver *pwmp) {
   (void)pwmp;
  	int step; 
-  palClearLine(LINE_LED_GREEN);
+//  palClearLine(LINE_LED_GREEN);
 	
 	++bldc.count;
 	
 	if(bldc.count==bldc.stretch){
-#ifdef BRUTEFORCE
+#ifdef OPENLOOP
 		++bldc.u;
 		++bldc.v;
 		++bldc.w;
@@ -80,9 +85,8 @@ static void pwmpcb(PWMDriver *pwmp) {
 			bldc.w = 0;
 		}
 #endif
-#ifndef BRUTEFORCE
+#ifndef OPENLOOP 
 //*
-//		int step = 360/(1<<14)*bldc.position;
 		step = bldc.position*360/(1<<14);
 		bldc.u = (step + 1 + bldc.phase_shift)%360;
 		bldc.v = (bldc.u + bldc.phase_shift)%360;
@@ -98,7 +102,7 @@ static sinctrl_t scale(sinctrl_t duty_cycle){
 }
 
 static void pwmCallback(uint8_t channel,sinctrl_t step){
-  palSetLine(LINE_LED_GREEN);
+ // palSetLine(LINE_LED_GREEN);
   pwmEnableChannelI(
 		&PWMD1,
 		channel,
@@ -136,7 +140,8 @@ static PWMConfig pwmcfg = {
   0
 };
 
-extern void acsInit(void){
+extern void acsInit(ACSdata *data){
+	bldc.data = data;
 	bldcInit();
 }
 
@@ -156,7 +161,8 @@ extern void bldcInit(){
 }
 
 extern void bldcStart(){
-	pwmStart(&PWMD1, &pwmcfg);
+	palSetLine(LINE_LED_GREEN);
+	pwmStart(&PWMD1,&pwmcfg);
   pwmEnablePeriodicNotification(&PWMD1);
 
 	pwmEnableChannel(&PWMD1,PWM_U,PWM_PERCENTAGE_TO_WIDTH(&PWMD1,bldc.u));
@@ -169,6 +175,7 @@ extern void bldcStart(){
 }
 
 extern void bldcStop(){
+  palClearLine(LINE_LED_GREEN);
 	pwmStop(&PWMD1);
 /*
   pwmEnablePeriodicNotification(&PWMD1);
