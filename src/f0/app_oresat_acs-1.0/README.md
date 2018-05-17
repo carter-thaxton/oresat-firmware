@@ -1,6 +1,6 @@
-# app_template
+# ACS Doxygen test
 
-This is the template app for new applications.
+This is a test of the Doxygen automatic documentation generator.
 
 To create a new app, simply copy the app_template directory and name it whatever you like.
 
@@ -17,7 +17,7 @@ PROJECT   = app_<name>
 ```
 
 Commands for interacting with the can bus
-
+```
 sudo slcand -o -c -f -s6 /dev/serial/by-id/*CANtact*-if00
 sudo ip link set slcan0 up
 candump slcan0
