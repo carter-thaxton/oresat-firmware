@@ -207,6 +207,21 @@ static acs_event getNextEvent(ACS *acs){
 }
 
 static int acs_statemachine(ACS *acs){
+/**
+ * This is a short, one-line description of the state machine
+ *
+ * This is a longer description of the state machine
+ * It spans multiple lines.
+ * 
+ * It even has multiple paragraphs. This is the second paragraph.
+ * This is another line in the second paragraph.
+ *
+ * This is the third paragraph.
+ * 
+ * @param int i is an integer variable. 
+ * @param acs->event is something that I don't know about yet.
+ * @return EXIT_SUCCESS
+ */
 	int i;
 	palSetLine(LINE_LED_GREEN);
 	
