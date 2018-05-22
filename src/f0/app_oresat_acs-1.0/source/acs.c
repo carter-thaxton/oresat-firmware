@@ -2,6 +2,11 @@
 
 event_listener_t el;
 
+/**
+ *
+ *
+ *
+ */
 char *state_name[] = {
 	"ST_ANY",
 	"ST_OFF",
@@ -11,6 +16,11 @@ char *state_name[] = {
 	"ST_MTQR"
 };
 
+/**
+ *
+ *
+ *
+ */
 char *event_name[] = {
 	"EV_ANY",
 	"EV_OFF",
@@ -33,11 +43,21 @@ char *event_name[] = {
 #define STATE_STRING "*Calling transition -> " 
 #define TRAP_STRING "*Calling trap -> " 
 
+/**
+ *
+ *
+ *
+ */
 static void print_state(int state){
 	(void)state;
 //	chprintf(DEBUG_CHP,"%s%s\n\r",STATE_STRING,state_name[state+1]); 
 }
 
+/**
+ *
+ *
+ *
+ */
 static void trans_cleanup(ACS *acs){
 	switch(acs->cur_state){
 		case ST_OFF:
@@ -63,6 +83,11 @@ static void trans_cleanup(ACS *acs){
 	}
 }
 
+/**
+ *
+ *
+ *
+ */
 static void update_recv(ACS *acs,int recv_byte){
 	switch(recv_byte){
 		case ERROR_CODE:
@@ -79,18 +104,33 @@ static void update_recv(ACS *acs,int recv_byte){
 	}
 }
 
+/**
+ *
+ *
+ *
+ */
 static int state_off(ACS *acs){
 	(void)acs;
 	print_state(ST_OFF);
 	return ST_OFF;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int state_init(ACS *acs){
 	(void)acs;
 	print_state(ST_INIT);
 	return ST_INIT;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int state_rdy(ACS *acs){
 	(void)acs;
 	trans_cleanup(acs);
@@ -98,6 +138,11 @@ static int state_rdy(ACS *acs){
 	return ST_RDY;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int state_rw(ACS *acs){
 	(void)acs;
 	trans_cleanup(acs);
@@ -106,6 +151,11 @@ static int state_rw(ACS *acs){
 	return ST_RW;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int state_mtqr(ACS *acs){
 	(void)acs;
 	trans_cleanup(acs);
@@ -114,6 +164,11 @@ static int state_mtqr(ACS *acs){
 	return ST_MTQR;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_rw_start(ACS *acs){
 	// *******critical section**********
 	chSysLock();
@@ -124,6 +179,11 @@ static int trap_rw_start(ACS *acs){
 	return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_rw_stop(ACS *acs){
 	// *******critical section**********
 	chSysLock();
@@ -134,6 +194,11 @@ static int trap_rw_stop(ACS *acs){
 	return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_mtqr_start(ACS *acs){
 	// *******critical section**********
 	chSysLock();
@@ -144,6 +209,11 @@ static int trap_mtqr_start(ACS *acs){
 	return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_mtqr_stop(ACS *acs){
 	(void)acs;
 	// *******critical section**********
@@ -155,6 +225,11 @@ static int trap_mtqr_stop(ACS *acs){
 	return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_rw_stretch(ACS *acs)
 {
   (void)acs;
@@ -163,6 +238,11 @@ static int trap_rw_stretch(ACS *acs)
   return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_rw_control(ACS *acs)
 {
   (void)acs;
@@ -171,6 +251,11 @@ static int trap_rw_control(ACS *acs)
   return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_rw_skip(ACS *acs)
 {
   (void)acs;
@@ -179,6 +264,11 @@ static int trap_rw_skip(ACS *acs)
   return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_rw_scale(ACS *acs)
 {
   (void)acs;
@@ -187,11 +277,21 @@ static int trap_rw_scale(ACS *acs)
   return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int trap_fsm_status(ACS *acs){
 	(void)acs;
 	return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 const acs_trap trap[] = {
 	{ST_RW,			EV_RW_START,		&trap_rw_start},
 	{ST_RW,			EV_RW_STOP,			&trap_rw_stop},
@@ -206,6 +306,11 @@ const acs_trap trap[] = {
 
 #define EVENT_COUNT (int)(sizeof(trap)/sizeof(acs_trap))
 
+/**
+ *
+ *
+ *
+ */
 static int fsm_trap(ACS *acs){
 	int i,trap_status;
 
@@ -228,6 +333,11 @@ static int fsm_trap(ACS *acs){
 	return acs->cur_state;
 }
 
+/**
+ *
+ *
+ *
+ */
 const acs_transition trans[] = {
 	{ST_INIT, 	EV_RDY,		&state_rdy},
 	{ST_INIT, 	EV_OFF,		&state_off},
@@ -239,6 +349,11 @@ const acs_transition trans[] = {
 	{ST_ANY, 		EV_ANY,		&fsm_trap}
 };
 
+/**
+ *
+ *
+ *
+ */
 #define TRANS_COUNT (int)(sizeof(trans)/sizeof(acs_transition))
 
 static acs_event getNextEvent(ACS *acs){
@@ -280,6 +395,11 @@ static acs_event getNextEvent(ACS *acs){
 	return event;
 }
 
+/**
+ *
+ *
+ *
+ */
 static int acs_statemachine(ACS *acs){
 	int i;
 //	palSetLine(LINE_LED_GREEN);
@@ -315,16 +435,22 @@ static int acs_statemachine(ACS *acs){
 	return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 extern int acsInit(ACS *acs){
 	(void)acs;
-//	palSetPadMode(GPIOA,GPIOA_TIM1_CH1,PAL_MODE_OUTPUT_PUSHPULL);
-//	palSetPad(GPIOB,ENABLE);	
-//	palClearPad(GPIOA,GPIOA_TIM1_CH1);	
-//	palClearPad(GPIOB,PH);
 	mtqrInit(&acs->mtqr);
 	return EXIT_SUCCESS;
 }
 
+/**
+ *
+ *
+ *
+ */
 THD_WORKING_AREA(wa_acsThread,WA_ACS_THD_SIZE);
 THD_FUNCTION(acsThread,acs){
   chRegSetThreadName("acsThread");

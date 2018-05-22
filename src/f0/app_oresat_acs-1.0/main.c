@@ -32,8 +32,12 @@ static SerialConfig ser_cfg ={
 	0,          //
 };
 
+/**
+ *
+ *
+ *
+ */
 static void app_init(void) {
-	//=== App initialization
 	acsInit(&acs);
 	canRPDOObjectInit(CAN_PDO_1,CAN_ID_DEFAULT,CAN_BUF_SIZE,acs.can_buf.recv);
 	canTPDOObjectInit(CAN_PDO_1,CAN_ID_DEFAULT,0,0,CAN_BUF_SIZE,acs.can_buf.send);
@@ -41,9 +45,12 @@ static void app_init(void) {
 	sdStart(&SD2, &ser_cfg);
 }
 
+/**
+ *
+ *
+ *
+ */
 static void app_main(void) {
-  //=== Start application threads
-
 	chThdCreateStatic(
 		wa_acsThread,
 		sizeof(wa_acsThread), 
@@ -57,6 +64,11 @@ static void app_main(void) {
 	}
 }
 
+/**
+ *
+ *
+ *
+ */
 int main(void){
 	halInit();
 	chSysInit();

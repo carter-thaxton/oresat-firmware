@@ -53,7 +53,6 @@
  *
  *
  */
-
 typedef struct{
 	uint16_t count,		// period counter
 			scale,		// scales the duty cycle
@@ -77,6 +76,11 @@ typedef struct{
 
 } bldc;
 
+/**
+ *
+ *
+ *
+ */
 static const SPIConfig spicfg = {
 	false,              // Enables circular buffer if == 1
 	NULL,               // Operation complete call back.
@@ -86,6 +90,11 @@ static const SPIConfig spicfg = {
 	SPI_CR2_DS_0|SPI_CR2_DS_1|SPI_CR2_DS_2|SPI_CR2_DS_3,//reg 2 mask
 };
 
+/**
+ *
+ *
+ *
+ */
 static const uint16_t chunk_low[6] = {
 	0 * CHUNK_SIZE,
   1 * CHUNK_SIZE,
@@ -95,9 +104,19 @@ static const uint16_t chunk_low[6] = {
   5 * CHUNK_SIZE
 };
 
+/**
+ *
+ *
+ *
+ */
 extern THD_WORKING_AREA(wa_spiThread,THREAD_SIZE);
 extern THD_FUNCTION(spiThread,arg);
 
+/**
+ *
+ *
+ *
+ */
 extern void bldcInit(bldc *pbldc);
 extern void bldcStart(void);
 extern void bldcStop(void);

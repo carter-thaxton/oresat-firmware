@@ -18,30 +18,24 @@
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 
-/**
- *	can_message
- *
- * 	Byte		Name		Use
- * 	0				
- *	1
- *	2
- *	3
- *	4
- *	5
- *
- *	CMD
- *
- *
- *
- *
- *
- */
 
+// TODO: can msg and recv need to be refactored
+
+/**
+ *	struct can_msg
+ *
+ * 	struct for incoming messages
+ */
 typedef enum{
 	MSG_TYPE=0,
 	ARG_BYTE
 }can_msg;
 
+/**
+ *
+ *
+ *
+ */
 typedef enum{
 	ERROR_CODE = 0,
 	ACS_STATE,
@@ -49,6 +43,11 @@ typedef enum{
 	LAST_TRAP,
 }can_recv;
 
+/**
+ *
+ *
+ *
+ */
 typedef enum{
 	NOP=0,
 	CHG_STATE,
@@ -56,9 +55,12 @@ typedef enum{
 	BLINK
 }can_msg_type;
 
-extern char *state_name[];
-extern char *event_name[];
-
+/**
+ * enum acs_state
+ *
+ * legal acs states
+ *
+ */
 typedef enum{
 	ST_ANY=-1,
 	ST_OFF,
@@ -68,6 +70,12 @@ typedef enum{
 	ST_MTQR
 }acs_state;
 
+/**
+ * enum acs_events
+ *
+ * possible acs events
+ *
+ */
 typedef enum {
 	EV_ANY=-1,
 	EV_OFF,					/// 0
@@ -87,11 +95,24 @@ typedef enum {
 	EV_END // this must be the last event
 }acs_event;
 
+/**
+ * struct can_buffer
+ *
+ * struct for the CAN send and
+ * receive buffers
+ *
+ */
 typedef struct{
 	uint8_t send[CAN_BUF_SIZE];
 	uint8_t recv[CAN_BUF_SIZE];	
 }can_buffer;
 
+/**
+ * struct ACS
+ *
+ * struct for ACS data and state
+ *
+ */
 typedef struct{
 	acs_state cur_state;
 	acs_event event; /// the most recent event
@@ -102,13 +123,18 @@ typedef struct{
   uint8_t data;
 }ACS;
 
+/**
+ * struct acs_transition,acs_trap;
+ *
+ * structs for handling state transitions
+ * and traps
+ *
+ */
 typedef struct{
 	acs_state state;
 	acs_event event;
 	int (*fn)(ACS *acs);
 }acs_transition,acs_trap;
-
-//extern int acs_statemachine(ACS *acs);
 
 extern int acsInit(ACS *acs);
 
