@@ -361,6 +361,7 @@ static acs_event getNextEvent(ACS *acs){
 	uint8_t recv[CAN_BUF_SIZE]={0};
 
 // synchronized with the CAN thread
+// ******critical section*******
 	chEvtWaitAny(ALL_EVENTS);	
 	chSysLock();
 	for(int i=0;i<CAN_BUF_SIZE;++i){

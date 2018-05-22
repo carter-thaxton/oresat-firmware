@@ -4,6 +4,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "bldc.h"
+#include "stdlib.h"
 #include "magnetorquer.h"
 #include "chprintf.h"
 #include "oresat.h"
@@ -90,8 +91,8 @@ typedef enum {
   EV_RW_CONTROL,  /// 9
   EV_RW_SKIP,     /// a
   EV_RW_SCALE,    /// b
-	EV_MTQR_START,  /// d
-	EV_MTQR_STOP,   /// e
+	EV_MTQR_START,  /// c
+	EV_MTQR_STOP,   /// d
 	EV_END // this must be the last event
 }acs_event;
 
