@@ -78,9 +78,13 @@ typedef enum {
 	EV_STATUS,			/// 5
 	EV_RW_START,		/// 6
 	EV_RW_STOP,			/// 7
-	EV_MTQR_START,  /// 8
-	EV_MTQR_STOP,   /// 9
-	EV_END /// EV_END must be the last event
+  EV_RW_STRETCH,  /// 8
+  EV_RW_CONTROL,  /// 9
+  EV_RW_SKIP,     /// a
+  EV_RW_SCALE,    /// b
+	EV_MTQR_START,  /// d
+	EV_MTQR_STOP,   /// e
+	EV_END // this must be the last event
 }acs_event;
 
 typedef struct{
@@ -94,6 +98,8 @@ typedef struct{
 	can_buffer can_buf;
 	bldc motor;
 	MTQR mtqr;
+  // TODO find a better way to handle it
+  uint8_t data;
 }ACS;
 
 typedef struct{
