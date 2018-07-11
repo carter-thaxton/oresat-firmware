@@ -183,12 +183,14 @@ static void app_init(void)
     }
 */
 
+    uint8_t rx_buf[2]={0x00 ,0 };
+    uint8_t command_buf[2] = {0x00 ,0x00 };
+
 	while (true)
     {
     //uint8_t command_buf[6];
-    uint8_t rx_bufi=0;
-    uint8_t rx_buf[5]={0 ,0 ,0 ,0 ,0};
-    uint8_t command_buf = 0x00;
+    //uint8_t rx_bufi=0;
+
     //command_buf[0] = AD_READ_BLK_LADR;
 
     //command_buf[1] = (uint8_t) (AD_MISC_FW >> 24);
@@ -200,22 +202,14 @@ static void app_init(void)
     //chprintf(DEBUG_CHP, "\r\r request-- 0x%x %x %x %x %x %x --\r\n", command_buf[0],command_buf[1],command_buf[2],command_buf[3],command_buf[4],command_buf[5]);
 
 	spiSelect(&SPID2);
-	spiStartReceive(&SPID2, 1, &rx_bufi);
+	spiStartExchange(&SPID2, 2, command_buf, rx_buf);
 	while((SPID2).state != SPI_READY) { }
-    chprintf(DEBUG_CHP, "\r\r radio status received-- 0x%x  --\r\n", rx_bufi);
-	//spiUnselect(&SPID2);
-    chThdSleepMilliseconds(500);
-
-	//spiSelect(&SPID2);
-	spiStartSend(&SPID2, 1, &command_buf);
-	while((SPID2).state != SPI_READY) {}
-
-	spiStartReceive(&SPID2, 5, rx_buf);
-	while((SPID2).state != SPI_READY) { }
-
-    chprintf(DEBUG_CHP, "\r\r long radio status-- 0x%x %x %x %x --\r\n", rx_buf[1],rx_buf[2],rx_buf[3],rx_buf[4]);
+    chprintf(DEBUG_CHP, "\r\r Sent to Radio-- 0x%x 0x%x --\r\n", command_buf[0],command_buf[1]);
+    chprintf(DEBUG_CHP, "\r\r Radio returned-- 0x%x 0x%x --\r\n", rx_buf[0],rx_buf[1]);
 	spiUnselect(&SPID2);
     chThdSleepMilliseconds(500);
+    command_buf[0] = command_buf[0] +1;
+
     palTogglePad(GPIOA, GPIOA_SX_TESTOUT);
     }
 

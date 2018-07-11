@@ -1,6 +1,6 @@
 # App-specific Source
 
-This has analog devices radio AD7030-1 files
+This contains AX5043 specific files
 
 Put any .h or .c files (besides main.c) you want to compile with your app in here. They will automatically build when you run make.
 
