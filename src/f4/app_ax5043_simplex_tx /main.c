@@ -29,6 +29,8 @@
 #include "chprintf.h"
 #include "util_version.h"
 #include "util_numbers.h"
+#include "ax5043.h"
+
 //#include "adf7030.h"
 
 #define     DEBUG_SERIAL                    SD2
@@ -110,79 +112,9 @@ static void app_init(void)
 	//spiSelect(&SPID2); 
     chThdSleepMilliseconds(1000);
 
-    chprintf(DEBUG_CHP, "Configuring AX5043\r\n");
 
-    //adf7030_phy_off(&SPID1);
-	//spiSelect(&SPID1);
-    //chThdSleepMilliseconds(500);
-	//spiUnselect(&SPID1);
-    //adf7030_read_status_reg(&SPID1);
-
-    //adf7030_phy_sleep(&SPID1);
-    //chThdSleepMilliseconds(500);
-    //adf7030_read_status_reg(&SPID1);
 
 /*
-    adf7030_phy_off(&SPID1);
-    chThdSleepMilliseconds(500);
-    adf7030_status(&SPID1);
-    adf7030_read_status_reg(&SPID1);
-
-    adf7030_cfg(&SPID1);
-    //adf7030_write_address(&SPID1, (uint32_t) (0x20000548), (uint32_t) (0x00000200));
-    adf7030_status(&SPID1);
-    chThdSleepMilliseconds(2500);
-
-    adf7030_phy_cfg(&SPID1);
-    //adf7030_read_status_reg(&SPID1);
-    chThdSleepMilliseconds(2500);
-    adf7030_read_address(&SPID1, (uint32_t) (0x20000548));
-    //adf7030_read_address(&SPID1, (uint32_t) (0x200002EC));
-    //adf7030_read_address(&SPID1, (uint32_t) (0x2000031C));
-    //adf7030_write_address(&SPID1, (uint32_t) (0x20000548), (uint32_t) (0x00000100));
-    //adf7030_read_address(&SPID1, (uint32_t) (0x20000548));
-    adf7030_status(&SPID1);
-    adf7030_read_status_reg(&SPID1);
-
-
-    adf7030_phy_off(&SPID1);
-    chThdSleepMilliseconds(500);
-    adf7030_status(&SPID1);
-    adf7030_read_status_reg(&SPID1);
-
-    adf7030_phy_on(&SPID1);
-    chThdSleepMilliseconds(500);
-    adf7030_status(&SPID1);
-    adf7030_read_status_reg(&SPID1);
-
-    //adf7030_phy_rx(&SPID1);
-    //adf7030_read_status_reg(&SPID1);
-
-    //adf7030_phy_tx(&SPID1);
-    //chThdSleepMilliseconds(500);
-    //adf7030_status(&SPID1);
-    //adf7030_read_status_reg(&SPID1);
-    adf7030_write_packet(&SPID1);
-
-    adf7030_phy_tx(&SPID1);
-    adf7030_read_status_reg(&SPID1);
-    adf7030_status(&SPID1);
-    //adf7030_write_packet(&SPID1);
-
-	while (true)
-    {
-      chThdSleepMilliseconds(1000);
-      chprintf(DEBUG_CHP, ".\n\r\n");
-      adf7030_write_packet(&SPID1);
-      adf7030_phy_tx(&SPID1);
-      chThdSleepMilliseconds(1000);
-      //adf7030_read_status_reg(&SPID1);
-      //chThdSleepMilliseconds(500);
-      adf7030_read_status_reg(&SPID1);
-      adf7030_status(&SPID1);
-    }
-*/
-
     uint8_t rx_buf[2]={0x00 ,0 };
     uint8_t command_buf[2] = {0x00 ,0x00 };
 
@@ -212,6 +144,61 @@ static void app_init(void)
 
     palTogglePad(GPIOA, GPIOA_SX_TESTOUT);
     }
+*/
+    uint8_t reg=0;
+    uint8_t value=0;
+    uint8_t value1=0x55;
+    uint8_t ret_value[2]={0,0};
+
+
+
+
+    reg = AX5043_REG_SCRATCH;
+    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
+
+    reg = AX5043_REG_SCRATCH;
+    value1 =value1+1;
+    ax5043_write_short_reg_8(&SPID2, reg, value1, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r written reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value1,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
+
+    reg = AX5043_REG_SCRATCH;
+    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
+
+
+
+
+    chprintf(DEBUG_CHP, "Configuring AX5043\r\n");
+    //ax5043_reset(&SPID2);
+    chprintf(DEBUG_CHP, "done reseting AX5043\r\n");
+
+  while(true)
+  {
+    reg = AX5043_REG_REV;
+    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
+
+    reg = AX5043_REG_SCRATCH;
+    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
+
+    reg = AX5043_REG_SCRATCH;
+    value1 =value1+1;
+    ax5043_write_short_reg_8(&SPID2, reg, value1, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r written reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value1,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
+
+    reg = AX5043_REG_SCRATCH;
+    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
+  }
 
 }
 

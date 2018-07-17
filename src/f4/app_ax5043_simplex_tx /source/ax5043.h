@@ -15,8 +15,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "util_numbers.h"
-
 
 
 /**
@@ -368,25 +366,28 @@
 #define AX5043_SCRATCH_TEST             0xAA
 
 /* Power modes */
+#define AX5043_RESET_BIT                (1 << 7)
+#define AX5043_OSC_EN_BIT                (1 << 6)
+#define AX5043_REF_EN_BIT                (1 << 5)
+
 #define AX5043_POWERDOWN                0x0
-#define AX5043_DEEPSLEEP                BIT(0)
-#define AX5043_STANDBY                  (BIT(2) | BIT(0))
-#define AX5043_FIFO_ENABLED             (BIT(2) | BIT(1) |BIT(0))
-#define AX5043_RECEIVE_MODE             (BIT(3))
-#define AX5043_RECEIVER_RUNNING         (BIT(3) | BIT(0))
-#define AX5043_RECEIVER_WOR             (BIT(3) | BIT(1) | BIT(0))
-#define AX5043_TRANSMIT_MODE            (BIT(3) | BIT(2))
-#define AX5043_TRANSMIT_RUNNING         (BIT(3) | BIT(2) | BIT(0))
-#define AX5043_FULLTX                   AX5043_TRANSMIT_RUNNING
+#define AX5043_DEEPSLEEP                0x1
+#define AX5043_STANDBY                  0x5
+#define AX5043_FIFO_ENABLED             0x7
+#define AX5043_SYNTH_RX                 0x8
+#define AX5043_FULL_RX                  0x9
+#define AX5043_WOR_RX                   0xB
+#define AX5043_SYNTH_TX                 0xC
+#define AX5043_FULL_TX                  0xD
 
 #define AX5043_RADIO_STATE_IDLE         0x0
 
-#define AX5043_PLLVCOI_MANUAL           BIT(7)
+#define AX5043_PLLVCOI_MANUAL           (1 << 7)
 
 /**
  * Modem Domain Voltage Regulator Ready
  */
-#define AX5043_SVMODEM                  BIT(3)
+#define AX5043_SVMODEM                  (1 << 3)
 
 /**
  * Init value for the VCO prior starting an autoranging
@@ -394,7 +395,7 @@
 #define AX5043_VCOR_INIT                8
 
 #define AX5043_RFDIV0                   0x0
-#define AX5043_RFDIV1                   BIT(2)
+#define AX5043_RFDIV1                   (1 << 2)
 
 #define AX5043_FREQSHAPE_EXT_FILTER     0x0
 #define AX5043_FREQSHAPE_INVALID        0x1
@@ -404,44 +405,44 @@
 /**
  *  FSK modulation mode
  */
-#define AX5043_MODULATION_FSK           BIT(3)
+#define AX5043_MODULATION_FSK           (1 << 3)
 
-#define AX5043_ENC_INV                  BIT(0)
-#define AX5043_ENC_DIFF                 BIT(1)
-#define AX5043_ENC_SCRAM                BIT(2)
+#define AX5043_ENC_INV                  1
+#define AX5043_ENC_DIFF                 (1 << 1)
+#define AX5043_ENC_SCRAM                (1 << 2)
 
 /**
  * HDLC Framing mode
  */
-#define AX5043_HDLC_FRAMING             BIT(2)
+#define AX5043_HDLC_FRAMING             (1 << 2)
 
 /**
  * HDLC compliant CRC16
  */
-#define AX5043_CRC16_CCITT              BIT(4)
+#define AX5043_CRC16_CCITT              (1 << 4)
 
 /**
  * Set the FIFO to variable length data mode
  */
 #define AX5043_FIFO_VARIABLE_DATA_CMD   0xe1
 
-#define AX5043_FIFO_REPEATDATA_CMD      (BIT(6) | BIT(5) | BIT(1))
-#define AX5043_FIFO_TXCTRL_CMD          (BIT(5) | BIT(4) | BIT(3) | BIT(2))
+#define AX5043_FIFO_REPEATDATA_CMD      ((1 << 6) | (1 << 5) | (1 << 1))
+#define AX5043_FIFO_TXCTRL_CMD          ((1 << 5) | (1 << 4) | (1 << 3) | (1 << 2))
 
 /**
  * Poweramp pin function, output/Z pull up for board 0.9 with diodes for 1.4V
  */
-#define AX5043_POWERAMP_MODE_OUTPUT     (BIT(2) | BIT(1))
-#define AX5043_POWERAMP_MODE_PULLUP     (BIT(7) | BIT(1))
-#define AX5043_POWERAMP_MODE_DAC        (BIT(2) | BIT(0))
+#define AX5043_POWERAMP_MODE_OUTPUT     (1 << 2) | 1)
+#define AX5043_POWERAMP_MODE_PULLUP     ((1 << 7) | 1)
+#define AX5043_POWERAMP_MODE_DAC        ((1 << 2) | 1)
 /**
  * FIFO commit command
  */
-#define AX5043_FIFO_COMMIT_CMD          BIT(2)
-#define AX5043_FIFO_PKTSTART            BIT(0)
-#define AX5043_FIFO_PKTEND              BIT(1)
-#define AX5043_FIFO_NOCRC               BIT(3)
-#define AX5043_FIFO_RAW                 BIT(4)
+#define AX5043_FIFO_COMMIT_CMD          (1 << 2)
+#define AX5043_FIFO_PKTSTART            1
+#define AX5043_FIFO_PKTEND              (1 << 1)
+#define AX5043_FIFO_NOCRC               (1 << 3)
+#define AX5043_FIFO_RAW                 (1 << 4)
 
 /**
  * Maximum chuck that can be committed on the FIFO
@@ -456,20 +457,20 @@
  */
 #define AX5043_FIFO_FREE_THR            128
 
-#define AX5043_IRQMFIFOTHRFREE          BIT(3)
-#define AX5043_IRQRFIFOTHRFREE          BIT(3)
-#define AX5043_IRQMRADIOCTRL            BIT(6)
-#define AX5043_REVMDONE                 BIT(0)
+#define AX5043_IRQMFIFOTHRFREE          (1 << 3)
+#define AX5043_IRQRFIFOTHRFREE          (1 << 3)
+#define AX5043_IRQMRADIOCTRL            (1 << 6)
+#define AX5043_REVMDONE                 0x1
 
 /**
  * TX antenna transmission mode
  */
-#define AX5043_TX_SINGLE_ENDED          BIT(1)
+#define AX5043_TX_SINGLE_ENDED          0x2
 
 /**
  * Radio confguration information
  */
-#define CALLSIGN_STATION                (uint8_t*) "SZ1NOA"
+#define CALLSIGN_STATION                (uint8_t*) "KG7ZVV"
 #define CALLSIGN_DESTINATION            (uint8_t*) ""
 
 #define APRS_UHF                        433800000
@@ -480,6 +481,12 @@
  *****************************************************************************/
 #define RX_FREQ_HZ                      433000000
 #define TX_FREQ_HZ                      APRS_UHF
+
+/**
+ * Enables/Disables the appropriate setup for deployment on the devboards or
+ * the
+ */
+#define PQWS_DEV_BOARD 0
 
 /* Reference Oscillator frequency */
 #if PQWS_DEV_BOARD
@@ -503,11 +510,7 @@
 #define AX5043_RF_SWITCH_ENABLE         ANTSEL_OUTPUT_1
 #define AX5043_RF_SWITCH_DISABLE        ANTSEL_OUTPUT_0
 
-/**
- * Enables/Disables the appropriate setup for deployment on the devboards or
- * the
- */
-#define PQWS_DEV_BOARD 0
+
 
 
 
@@ -587,15 +590,17 @@ typedef struct
   uint8_t f_xtaldiv;
   uint32_t tx_baudrate;
   uint32_t rx_baudrate;
-  SPI_HandleTypeDef *spi;
+  SPIDriver *spi;
   uint8_t rf_init;
   freq_mode_t freqsel;
   vco_mode_t vco;
 } ax5043_conf_t;
 
 
-
-
+//function declaration starts here
+void ax5043_write_short_reg_8(SPIDriver * spip, uint8_t reg, uint8_t value, uint8_t ret_value[]);
+void ax5043_read_short_reg_8(SPIDriver * spip, uint8_t reg, uint8_t value, uint8_t ret_value[]);
+void ax5043_reset(SPIDriver * spip);
 
 #endif
 //! @}
