@@ -188,11 +188,11 @@
 #define AX5043_REG_TIMEGAIN0            0x124
 #define AX5043_REG_DRGAIN0              0x125
 #define AX5043_REG_PHASEGAIN0           0x126
-#define AX5043_REG_FREQGAINA0           0x127
-#define AX5043_REG_FREQGAINB0           0x128
-#define AX5043_REG_FREQGAINC0           0x129
-#define AX5043_REG_FREQGAIND0           0x12A
-#define AX5043_REG_AMPLGAIN0            0x12B
+#define AX5043_REG_FREQUENCYGAINA0      0x127
+#define AX5043_REG_FREQUENCYGAINB0      0x128
+#define AX5043_REG_FREQUENCYGAINC0      0x129
+#define AX5043_REG_FREQUENCYGAIND0      0x12A
+#define AX5043_REG_AMPLITUDEGAIN0       0x12B
 #define AX5043_REG_FREQDEV10            0x12C
 #define AX5043_REG_FREQDEV00            0x12D
 #define AX5043_REG_FOURFSK0             0x12E
@@ -206,11 +206,11 @@
 #define AX5043_REG_TIMEGAIN1            0x134
 #define AX5043_REG_DRGAIN1              0x135
 #define AX5043_REG_PHASEGAIN1           0x136
-#define AX5043_REG_FREQGAINA1           0x137
-#define AX5043_REG_FREQGAINB1           0x138
-#define AX5043_REG_FREQGAINC1           0x139
-#define AX5043_REG_FREQGAIND1           0x13A
-#define AX5043_REG_AMPLGAIN1            0x13B
+#define AX5043_REG_FREQUENCYGAINA1      0x137
+#define AX5043_REG_FREQUENCYGAINB1      0x138
+#define AX5043_REG_FREQUENCYGAINC1      0x139
+#define AX5043_REG_FREQUENCYGAIND1      0x13A
+#define AX5043_REG_AMPLITUDEGAIN1       0x13B
 #define AX5043_REG_FREQDEV11            0x13C
 #define AX5043_REG_FREQDEV01            0x13D
 #define AX5043_REG_FOURFSK1             0x13E
@@ -242,11 +242,11 @@
 #define AX5043_REG_TIMEGAIN3            0x154
 #define AX5043_REG_DRGAIN3              0x155
 #define AX5043_REG_PHASEGAIN3           0x156
-#define AX5043_REG_FREQGAINA3           0x157
-#define AX5043_REG_FREQGAINB3           0x158
-#define AX5043_REG_FREQGAINC3           0x159
-#define AX5043_REG_FREQGAIND3           0x15A
-#define AX5043_REG_AMPLGAIN3            0x15B
+#define AX5043_REG_FREQUENCYGAINA3      0x157
+#define AX5043_REG_FREQUENCYGAINB3      0x158
+#define AX5043_REG_FREQUENCYGAINC3      0x159
+#define AX5043_REG_FREQUENCYGAIND3      0x15A
+#define AX5043_REG_AMPLITUDEGAIN3       0x15B
 #define AX5043_REG_FREQDEV13            0x15C
 #define AX5043_REG_FREQDEV03            0x15D
 #define AX5043_REG_FOURFSK3             0x15E
@@ -356,7 +356,28 @@
 #define AX5043_REG_LPOSCPER1            0x318
 #define AX5043_REG_LPOSCPER0            0x319
 
+/* DAC */
+#define AX5043_REG_DACVALUE1            0x330
+#define AX5043_REG_DACVALUE0            0x331
+#define AX5043_REG_DACCONFIG            0x332
+
 /* Performance Tuning Registers */
+#define AX5043_REG_REF                  0xF0D
+#define AX5043_REG_XTALOSC              0xF10
+#define AX5043_REG_XTALAMPL             0xF11
+#define AX5043_REG_0xF1C                0xF1C
+#define AX5043_REG_0xF21                0xF21
+#define AX5043_REG_0xF22                0xF22
+#define AX5043_REG_0xF23                0xF23
+#define AX5043_REG_0xF26                0xF26
+#define AX5043_REG_0xF30                0xF30
+#define AX5043_REG_0xF31                0xF31
+#define AX5043_REG_0xF32                0xF32
+#define AX5043_REG_0xF33                0xF33
+#define AX5043_REG_0xF34                0xF34
+#define AX5043_REG_0xF35                0xF35
+#define AX5043_REG_0xF44                0xF44
+#define AX5043_REG_0xF72                0xF72
 #define AX5043_REG_XTALDIV              0xF35
 
 /******************************************************************************
@@ -367,8 +388,8 @@
 
 /* Power modes */
 #define AX5043_RESET_BIT                (1 << 7)
-#define AX5043_OSC_EN_BIT                (1 << 6)
-#define AX5043_REF_EN_BIT                (1 << 5)
+#define AX5043_OSC_EN_BIT               (1 << 6)
+#define AX5043_REF_EN_BIT               (1 << 5)
 
 #define AX5043_POWERDOWN                0x0
 #define AX5043_DEEPSLEEP                0x1
@@ -598,9 +619,14 @@ typedef struct
 
 
 //function declaration starts here
-void ax5043_write_short_reg_8(SPIDriver * spip, uint8_t reg, uint8_t value, uint8_t ret_value[]);
-void ax5043_read_short_reg_8(SPIDriver * spip, uint8_t reg, uint8_t value, uint8_t ret_value[]);
+void ax5043_write_short_reg_8(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
+void ax5043_read_short_reg_8(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
 void ax5043_reset(SPIDriver * spip);
+
+void ax5043_shutdown(SPIDriver * spip);
+void ax5043_full_rx(SPIDriver * spip);
+void ax5043_full_tx(SPIDriver * spip);
+void ax5043_init(SPIDriver * spip);
 
 #endif
 //! @}

@@ -145,13 +145,16 @@ static void app_init(void)
     palTogglePad(GPIOA, GPIOA_SX_TESTOUT);
     }
 */
-    uint8_t reg=0;
+    uint16_t reg=0;
     uint8_t value=0;
     uint8_t value1=0x55;
-    uint8_t ret_value[2]={0,0};
+    uint8_t ret_value[3]={0,0,0};
 
 
-
+    reg = AX5043_REG_REV;
+    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    chThdSleepMilliseconds(1500);
 
     reg = AX5043_REG_SCRATCH;
     ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
@@ -173,19 +176,20 @@ static void app_init(void)
 
 
     chprintf(DEBUG_CHP, "Configuring AX5043\r\n");
-    //ax5043_reset(&SPID2);
+    ax5043_init(&SPID2);
     chprintf(DEBUG_CHP, "done reseting AX5043\r\n");
 
   while(true)
   {
-    reg = AX5043_REG_REV;
-    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+
+    reg = 0x314;
+    ax5043_write_short_reg_8(&SPID2, reg, value1, ret_value);
+    //chprintf(DEBUG_CHP, "\r\r reg 220 contents=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
-    reg = AX5043_REG_SCRATCH;
+    reg = 0x314;
     ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    //chprintf(DEBUG_CHP, "\r\r reg 220 contents=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
     reg = AX5043_REG_SCRATCH;
