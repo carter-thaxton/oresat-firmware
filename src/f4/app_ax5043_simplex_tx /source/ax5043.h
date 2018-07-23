@@ -362,10 +362,14 @@
 #define AX5043_REG_DACCONFIG            0x332
 
 /* Performance Tuning Registers */
-#define AX5043_REG_REF                  0xF0D
+#define AX5043_REG_REF                  0xF00
+#define AX5043_REG_0xF00                0xF00
+#define AX5043_REG_0xF0C                0xF0C
+#define AX5043_REG_0xF0D                0xF0D
 #define AX5043_REG_XTALOSC              0xF10
 #define AX5043_REG_XTALAMPL             0xF11
 #define AX5043_REG_0xF1C                0xF1C
+#define AX5043_REG_0xF18                0xF18
 #define AX5043_REG_0xF21                0xF21
 #define AX5043_REG_0xF22                0xF22
 #define AX5043_REG_0xF23                0xF23
@@ -443,12 +447,22 @@
 #define AX5043_CRC16_CCITT              (1 << 4)
 
 /**
- * Set the FIFO to variable length data mode
+ * FIFO commands
  */
-#define AX5043_FIFO_VARIABLE_DATA_CMD   0xe1
 
-#define AX5043_FIFO_REPEATDATA_CMD      ((1 << 6) | (1 << 5) | (1 << 1))
-#define AX5043_FIFO_TXCTRL_CMD          ((1 << 5) | (1 << 4) | (1 << 3) | (1 << 2))
+#define AX5043_NOP_CMD                  0x0
+#define AX5043_RSSI_CMD                 0x31
+#define AX5043_TXCTRL_CMD               0x3C
+#define AX5043_FREQOFFS_CMD             0x52
+#define AX5043_ANTRSSI2_CMD             0x55
+#define AX5043_REPEATDATA_CMD           0x62
+#define AX5043_TIMER_CMD                0x70
+#define AX5043_RFREQOFFS_CMD            0x73
+#define AX5043_DATARATE_CMD             0x74
+#define AX5043_ANTRSSI3_CMD             0x75
+#define AX5043_DATA_CMD                 0xE1
+#define AX5043_TXPWR_CMD                0xFD
+
 
 /**
  * Poweramp pin function, output/Z pull up for board 0.9 with diodes for 1.4V
@@ -619,14 +633,24 @@ typedef struct
 
 
 //function declaration starts here
-void ax5043_write_short_reg_8(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
-void ax5043_read_short_reg_8(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
-void ax5043_reset(SPIDriver * spip);
-
+void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
+void ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
+void ax5043_set_regs(SPIDriver * spip);
+void ax5043_set_regs_tx(SPIDriver * spip);
+void ax5043_set_regs_rx(SPIDriver * spip);
+void ax5043_set_regs_rxcont(SPIDriver * spip);
+void ax5043_set_regs_rxcont_singleparamset(SPIDriver * spip);
 void ax5043_shutdown(SPIDriver * spip);
+void ax5043_standby(SPIDriver * spip);
+void ax5043_fifo_en(SPIDriver * spip);
 void ax5043_full_rx(SPIDriver * spip);
+void ax5043_synth_tx(SPIDriver * spip);
 void ax5043_full_tx(SPIDriver * spip);
+void ax5043_reset(SPIDriver * spip);
+void ax5043_prepare_tx(SPIDriver * spip);
+
 void ax5043_init(SPIDriver * spip);
+void ax5043_transmit(SPIDriver * spip);
 
 #endif
 //! @}

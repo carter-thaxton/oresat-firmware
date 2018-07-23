@@ -152,23 +152,23 @@ static void app_init(void)
 
 
     reg = AX5043_REG_REV;
-    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    ax5043_read_reg(&SPID2, reg, value, ret_value);
     //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
     reg = AX5043_REG_SCRATCH;
-    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    ax5043_read_reg(&SPID2, reg, value, ret_value);
     //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
     reg = AX5043_REG_SCRATCH;
     value1 =value1+1;
-    ax5043_write_short_reg_8(&SPID2, reg, value1, ret_value);
+    ax5043_write_reg(&SPID2, reg, value1, ret_value);
     //chprintf(DEBUG_CHP, "\r\r written reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value1,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
     reg = AX5043_REG_SCRATCH;
-    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    ax5043_read_reg(&SPID2, reg, value, ret_value);
     //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
@@ -176,32 +176,42 @@ static void app_init(void)
 
 
     chprintf(DEBUG_CHP, "Configuring AX5043\r\n");
+    chThdSleepMilliseconds(50);
     ax5043_init(&SPID2);
     chprintf(DEBUG_CHP, "done reseting AX5043\r\n");
 
+/*
   while(true)
   {
 
     reg = 0x314;
-    ax5043_write_short_reg_8(&SPID2, reg, value1, ret_value);
+    ax5043_write_reg(&SPID2, reg, value1, ret_value);
     //chprintf(DEBUG_CHP, "\r\r reg 220 contents=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
     reg = 0x314;
-    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    ax5043_read_reg(&SPID2, reg, value, ret_value);
     //chprintf(DEBUG_CHP, "\r\r reg 220 contents=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
     reg = AX5043_REG_SCRATCH;
     value1 =value1+1;
-    ax5043_write_short_reg_8(&SPID2, reg, value1, ret_value);
+    ax5043_write_reg(&SPID2, reg, value1, ret_value);
     //chprintf(DEBUG_CHP, "\r\r written reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value1,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
     reg = AX5043_REG_SCRATCH;
-    ax5043_read_short_reg_8(&SPID2, reg, value, ret_value);
+    ax5043_read_reg(&SPID2, reg, value, ret_value);
     //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
+  }*/
+
+  ax5043_prepare_tx(&SPID2);
+  while(true)
+  {
+    ax5043_transmit(&SPID2);
+    chThdSleepMilliseconds(3000);
+    chprintf(DEBUG_CHP, ".");
   }
 
 }
