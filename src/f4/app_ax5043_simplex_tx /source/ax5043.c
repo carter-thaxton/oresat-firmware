@@ -446,9 +446,9 @@ void ax5043_init(SPIDriver * spip)
   //set frequency based on page 693 on conig.c and 1640 on easyax5043.c from 
   //codeblocks generated code
   ax5043_write_reg(spip, AX5043_REG_FREQA0, (uint8_t)0xab, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQA0, (uint8_t)0xaa, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_FREQA0, (uint8_t)0x12, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_FREQA0, (uint8_t)0x09, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA1, (uint8_t)0xaa, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA2, (uint8_t)0x12, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA3, (uint8_t)0x09, ret_value); 
 
 
   //PLL autoranging
@@ -486,13 +486,13 @@ void ax5043_transmit(SPIDriver * spip)
 
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x10, ret_value);//packet length
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x24, ret_value);//packet details like raw packet
+  //ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x24, ret_value);//packet details like raw packet
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x08, ret_value);//packet details like raw packet
   for (i=0;i<20;i++)
   {
-      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);//some random data
+      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);//some random data
   }
   ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit  
-
 
 }
 
