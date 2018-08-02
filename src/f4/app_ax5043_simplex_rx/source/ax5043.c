@@ -321,10 +321,21 @@ void ax5043_fifo_en(SPIDriver * spip)
  * @param conf the AX5043 configuration handler
  * @return 0 on success or appropriate negative error code
  */
+void ax5043_synth_rx(SPIDriver * spip)
+{
+  uint8_t ret_value[3]={0,0,0};
+  ax5043_write_reg(spip, AX5043_REG_PWRMODE, AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT | AX5043_SYNTH_RX, ret_value);
+}
+
+/**
+ * AX5043 on RX
+ * @param conf the AX5043 configuration handler
+ * @return 0 on success or appropriate negative error code
+ */
 void ax5043_full_rx(SPIDriver * spip)
 {
   uint8_t ret_value[3]={0,0,0};
-  ax5043_write_reg(spip, AX5043_REG_PWRMODE, AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT | AX5043_STANDBY, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PWRMODE, AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT | AX5043_FULL_RX, ret_value);
 }
 
 
@@ -412,8 +423,37 @@ void ax5043_prepare_tx(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_FIFOTHRESH0, (uint8_t)0x80, ret_value);
   ax5043_write_reg(spip, AX5043_REG_IRQMASK0, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_IRQMASK1, (uint8_t)0x01, ret_value);
+  ax5043_synth_tx(spip);
+  chThdSleepMilliseconds(50);
   ax5043_full_tx(spip);
 }
+
+
+
+/**
+ * prepare AX5043 for tx
+ * @param conf the AX5043 configuration handler
+ * @return 0 on success or appropriate negative error code
+ */
+void ax5043_prepare_rx(SPIDriver * spip)
+{
+
+  //uint8_t reg=0;
+  //uint8_t value=0;
+  uint8_t ret_value[3]={0,0,0};
+
+  ax5043_standby(spip);
+  ax5043_fifo_en(spip);
+  ax5043_set_regs_rx(spip);
+  ax5043_write_reg(spip, AX5043_REG_FIFOTHRESH1, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFOTHRESH0, (uint8_t)0x80, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_IRQMASK0, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_IRQMASK1, (uint8_t)0x01, ret_value);
+  ax5043_synth_rx(spip);
+  chThdSleepMilliseconds(50);
+  ax5043_full_rx(spip);
+}
+
 
 
 /**
@@ -497,4 +537,34 @@ void ax5043_transmit(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit  
 
 }
+
+
+
+/**
+ * prepare AX5043 for tx
+ * @param conf the AX5043 configuration handler
+ * @return 0 on success or appropriate negative error code
+ */
+void ax5043_receive(SPIDriver * spip)
+{
+
+  //uint8_t reg=0;
+  uint8_t value=0;
+  uint8_t ret_value[3]={0,0,0};
+  //int i=0;
+  chprintf(DEBUG_CHP, "\r\r Inside ax5043_receive... \r\n");
+  value =  ax5043_read_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)AX5043_DATA_CMD, ret_value); 
+  if ((value & 0x01) != 1)//Is FIFO not empty
+  {
+    while ((ax5043_read_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)AX5043_DATA_CMD, ret_value) & 0x01) != 1)
+    {
+      ax5043_read_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x10, ret_value);
+    }
+  }
+ 
+
+}
+
+
+
 

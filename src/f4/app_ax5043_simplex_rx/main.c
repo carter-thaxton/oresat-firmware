@@ -204,12 +204,22 @@ static void app_init(void)
     ax5043_read_reg(&SPID2, reg, value, ret_value);
     //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
-  }*/
+  }
 
   ax5043_prepare_tx(&SPID2);
   while(true)
   {
     ax5043_transmit(&SPID2);
+    chThdSleepMilliseconds(3000);
+    chprintf(DEBUG_CHP, ".");
+  }*/
+
+  ax5043_synth_rx(&SPID2);
+  chThdSleepMilliseconds(50);
+  ax5043_prepare_rx(&SPID2);
+  while(true)
+  {
+    ax5043_receive(&SPID2);
     chThdSleepMilliseconds(3000);
     chprintf(DEBUG_CHP, ".");
   }
