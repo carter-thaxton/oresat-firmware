@@ -30,6 +30,9 @@
 
 #include "ax.h"
 
+#define DEBUG_SERIAL  SD2
+#define DEBUG_CHP     ((BaseSequentialStream *) &DEBUG_SERIAL)
+
 /* populates ax_params structure */
 void ax_populate_params(ax_config* config, ax_modulation* mod, ax_params* par);
 

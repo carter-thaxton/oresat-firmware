@@ -103,6 +103,11 @@ static const SPIConfig spicfg_tx =
 };
 
 
+void rx_callback(unsigned char* data, uint8_t length)
+{
+  chprintf(DEBUG_CHP, "Rx: %s\r\n", (char*)data);
+}
+
 /*
  * Initialize the SPI drivers and configure the adf7030 chips
  */
@@ -261,23 +266,25 @@ static void app_init(void)
   ax_default_params(&config, &gmsk_hdlc_fec_modulation);
 
   /* -------- tx -------- */
-  /* ax_tx_on(&config, &gmsk_hdlc_fec_modulation); */
-  /* while (1) { */
+   ax_tx_on(&config, &gmsk_hdlc_fec_modulation); 
+   while (1) { 
   /*   /\* int aprs_len = aprs(); *\/ */
   /*   /\* ax_tx_packet(&config, &msk1_modulation, ax25_frame, aprs_len); *\/ */
 
   /*                          //////////////////////////////////////// */
-  /*   strcpy((char*)tx_pkt, "ughdffgiuhdfudshfdjshfdjshfsudhfdskjfdfd"); */
-  /*   ax_tx_packet(&config, &gmsk_hdlc_fec_modulation, tx_pkt, 40); */
-  /* } */
+     strcpy((char*)tx_pkt, "ughdffgiuhdfudshfdjshfdjshfsudhfdskjfdfd"); 
+     ax_tx_packet(&config, &gmsk_hdlc_fec_modulation, tx_pkt, 40); 
+   } 
 
   /* -------- rx -------- */
-  ax_rx_on(&config, &gmsk_hdlc_fec_modulation);
-  while (1) {
-    while (ax_rx_packet(&config, &rx_pkt)) {
-      printf("rx!\n");
-    }
-  }
+
+  //ax_rx_on(&config, &gmsk_hdlc_fec_modulation);
+  //while (1) {
+  //  while (ax_rx_packet(&config, &rx_pkt)) {
+  //    chprintf(DEBUG_CHP,"rx!\r\n");
+  //  }
+  //}
+
 
 }
 

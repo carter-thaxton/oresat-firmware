@@ -27,6 +27,9 @@
 
 #include "ax.h"
 
+#define DEBUG_SERIAL  SD2
+#define DEBUG_CHP     ((BaseSequentialStream *) &DEBUG_SERIAL)
+
 /* GFSK HDLC test */
 extern struct ax_modulation gfsk_hdlc_modulation;
 /* GMSK test */

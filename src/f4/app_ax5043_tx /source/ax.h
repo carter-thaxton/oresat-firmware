@@ -32,6 +32,9 @@
 #include "hal.h"
 #include "chprintf.h"
 
+#define DEBUG_SERIAL  SD2
+#define DEBUG_CHP     ((BaseSequentialStream *) &DEBUG_SERIAL)
+
 /**
  * Initialisation Status
  */

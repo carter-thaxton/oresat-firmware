@@ -44,12 +44,12 @@
 #include "ax_modes.h"
 #include "ax_params.h"
 
-#include <stdio.h>
-#ifdef DEBUG
-#define debug_printf printf
-#else
-#define debug_printf(...)
-#endif
+//#include <stdio.h>
+//#ifdef DEBUG
+//#define debug_printf chprintf
+//#else
+//#define debug_printf(...)
+//#endif
 
 #define MIN(a,b) ((a < b) ? (a) : (b))
 
@@ -232,7 +232,7 @@ uint16_t ax_fifo_rx_data(ax_config* config, ax_rx_chunk* chunk)
     return 0;                   /* nothing to read */
   }
 
-  debug_printf("got something. fifocount = %d\n", fifocount);
+  chprintf(DEBUG_CHP,"got something. fifocount = %d\r\n", fifocount);
 
   chunk->chunk_t = ax_hw_read_register_8(config, AX_REG_FIFODATA);
 
@@ -308,7 +308,7 @@ void ax_wait_for_oscillator(ax_config* config)
     i++;
   }
 
-  debug_printf("osc stable in %d cycles\n", i);
+  chprintf(DEBUG_CHP,"osc stable in %d cycles\r\n", i);
 }
 /**
  * Converts a value to 4-bit mantissa and 4-bit exponent
@@ -377,7 +377,7 @@ void ax_set_modulation_parameters(ax_config* config, ax_modulation* mod)
   /* encoding (inv, diff, scram, manch..) */
   if ((mod->encoding & AX_ENC_INV) && mod->fec) {
                                 /* FEC doesn't play with inversion */
-    debug_printf("WARNING: Inversion is not supported in FEC! NOT INVERTING\n");
+    chprintf(DEBUG_CHP,"WARNING: Inversion is not supported in FEC! NOT INVERTING\r\n");
     mod->encoding &= ~AX_ENC_INV; /* clear inv bit */
   }
   ax_hw_write_register_8(config, AX_REG_ENCODING, mod->encoding);
@@ -385,7 +385,7 @@ void ax_set_modulation_parameters(ax_config* config, ax_modulation* mod)
   /* framing */
   if (mod->fec && ((mod->framing & 0xE) != AX_FRAMING_MODE_HDLC)) {
     /* FEC needs HDLC framing */
-    debug_printf("WARNING: FEC needs HDLC! Forcing HDLC framing..\n");
+    chprintf(DEBUG_CHP,"WARNING: FEC needs HDLC! Forcing HDLC framing..\r\n");
     mod->framing &= ~0xE;
     mod->framing |= AX_FRAMING_MODE_HDLC;
   }
@@ -435,7 +435,7 @@ uint32_t ax_set_freq_register(ax_config* config,
   freq = (freq << 1) | 1;
   ax_hw_write_register_32(config, reg, freq);
 
-  debug_printf("freq %d = 0x%08x\n", frequency, freq);
+  chprintf(DEBUG_CHP,"freq %d = 0x%08x\r\n", frequency, freq);
 
   return freq;
 }
@@ -552,7 +552,7 @@ void ax_set_afsk_rx_parameters(ax_config* config, ax_modulation* mod)
                          (float)config->f_xtal) + 0.5);
   ax_hw_write_register_16(config, AX_REG_AFSKMARK, afskmark);
 
-  debug_printf("afskmark (rx) %d = 0x%04x\n", mark, afskmark);
+  chprintf(DEBUG_CHP,"afskmark (rx) %d = 0x%04x\r\n", mark, afskmark);
 
   /* Space */
   afskspace = (uint16_t)((((float)space * (1 << 16) *
@@ -560,7 +560,7 @@ void ax_set_afsk_rx_parameters(ax_config* config, ax_modulation* mod)
                           (float)config->f_xtal) + 0.5);
   ax_hw_write_register_16(config, AX_REG_AFSKSPACE, afskspace);
 
-  debug_printf("afskspace (rx) %d = 0x%04x\n", space, afskspace);
+  chprintf(DEBUG_CHP,"afskspace (rx) %d = 0x%04x\r\n", space, afskspace);
 
   /* Detector Bandwidth */
   ax_hw_write_register_16(config, AX_REG_AFSKCTRL, mod->par.afskshift);
@@ -573,7 +573,7 @@ void ax_set_rx_parameters(ax_config* config, ax_modulation* mod)
   /* IF Frequency */
   ax_hw_write_register_16(config, AX_REG_IFFREQ, mod->par.iffreq);
 
-  debug_printf("WRITE IFFREQ %d\n", mod->par.iffreq);
+  chprintf(DEBUG_CHP,"WRITE IFFREQ %d\r\n", mod->par.iffreq);
 
   /* Decimation */
   ax_hw_write_register_8(config, AX_REG_DECIMATION, mod->par.decimation);
@@ -704,14 +704,14 @@ void ax_set_afsk_tx_parameters(ax_config* config, ax_modulation* mod)
                          (float)config->f_xtal) + 0.5);
   ax_hw_write_register_16(config, AX_REG_AFSKMARK, afskmark);
 
-  debug_printf("afskmark (tx) %d = 0x%04x\n", mark, afskmark);
+  chprintf(DEBUG_CHP,"afskmark (tx) %d = 0x%04x\r\n", mark, afskmark);
 
   /* Space */
   afskspace = (uint16_t)((((float)space * (1 << 18)) /
                           (float)config->f_xtal) + 0.5);
   ax_hw_write_register_16(config, AX_REG_AFSKSPACE, afskspace);
 
-  debug_printf("afskspace (tx) %d = 0x%04x\n", space, afskspace);
+  chprintf(DEBUG_CHP,"afskspace (tx) %d = 0x%04x\r\n", space, afskspace);
 }
 /**
  * helper function (5.16)
@@ -735,22 +735,22 @@ uint8_t ax_modcfga_tx_parameters_tx_path(enum ax_transmit_path path)
 #ifdef _AX_TX_SE
       return AX_MODCFGA_TXSE;
 #else
-      debug_printf("Single ended transmit path NOT set!\n");
-      debug_printf("Check this is okay on your hardware, and define _AX_TX_SE to enable.\n");
-      debug_printf("Setting differential transmit path instead...\n");
+      chprintf(DEBUG_CHP,"Single ended transmit path NOT set!\r\n");
+      chprintf(DEBUG_CHP,"Check this is okay on your hardware, and define _AX_TX_SE to enable.\r\n");
+      chprintf(DEBUG_CHP,"Setting differential transmit path instead...\r\n");
       return AX_MODCFGA_TXDIFF;
 #endif
     case AX_TRANSMIT_PATH_DIFF:
 #ifdef _AX_TX_DIFF
       return AX_MODCFGA_TXDIFF;
 #else
-      debug_printf("Differential transmit path NOT set!\n");
-      debug_printf("Check this is okay on your hardware, and define _AX_TX_DIFF to enable.\n");
-      debug_printf("Setting single ended transmit path instead...\n");
+      chprintf(DEBUG_CHP,"Differential transmit path NOT set!\r\n");
+      chprintf(DEBUG_CHP,"Check this is okay on your hardware, and define _AX_TX_DIFF to enable.\r\n");
+      chprintf(DEBUG_CHP,"Setting single ended transmit path instead...\r\n");
       return AX_MODCFGA_TXSE;
 #endif
     default:
-      debug_printf("Unknown transmit path!\n");
+      chprintf(DEBUG_CHP,"Unknown transmit path!\r\n");
 #ifdef _AX_TX_DIFF
       return AX_MODCFGA_TXDIFF;
 #else
@@ -806,7 +806,7 @@ void ax_set_tx_parameters(ax_config* config, ax_modulation* mod)
       break;
   }
   ax_hw_write_register_24(config, AX_REG_FSKDEV, fskdev);
-  debug_printf("fskdev %d = 0x%06x\n", deviation, fskdev);
+  chprintf(DEBUG_CHP,"fskdev %d = 0x%06x\r\n", deviation, fskdev);
 
 
   /* TX bitrate. We assume bitrate < f_xtal */
@@ -814,11 +814,11 @@ void ax_set_tx_parameters(ax_config* config, ax_modulation* mod)
                        (float)config->f_xtal) + 0.5);
   ax_hw_write_register_24(config, AX_REG_TXRATE, txrate);
 
-  debug_printf("bitrate %d = 0x%06x\n", mod->bitrate, txrate);
+  chprintf(DEBUG_CHP,"bitrate %d = 0x%06x\r\n", mod->bitrate, txrate);
 
   /* check bitrate for asynchronous wire mode */
   if (1 && mod->bitrate >= config->f_xtal / 32) {
-    debug_printf("for asynchronous wire mode, bitrate must be less than f_xtal/32\n");
+    chprintf(DEBUG_CHP,"for asynchronous wire mode, bitrate must be less than f_xtal/32\r\n");
   }
 
   /* TX power */
@@ -831,7 +831,7 @@ void ax_set_tx_parameters(ax_config* config, ax_modulation* mod)
   pwr = (pwr > 0xFFF) ? 0xFFF : pwr; /* max 0xFFF */
   ax_hw_write_register_16(config, AX_REG_TXPWRCOEFFB, pwr);
 
-  debug_printf("power %f = 0x%03x\n", mod->power, pwr);
+  chprintf(DEBUG_CHP,"power %f = 0x%03x\r\n", mod->power, pwr);
 }
 
 /**
@@ -852,7 +852,7 @@ void ax_set_pll_parameters(ax_config* config)
   config->f_pllrng = config->f_xtal / (1 << (8 + pllrngclk_div));
   /* NOTE: config->f_pllrng should be less than 1/10 of the loop filter b/w */
   /* 8kHz is fine, as minimum loop filter b/w is 100kHz */
-  debug_printf("Ranging clock f_pllrng %d Hz\n", config->f_pllrng);
+  chprintf(DEBUG_CHP,"Ranging clock f_pllrng %d Hz\r\n", config->f_pllrng);
 }
 /**
  * 5.18 set xtal parameters
@@ -876,7 +876,7 @@ void ax_set_xtal_parameters(ax_config* config)
                (config->load_capacitance <= 39)) {
       xtalcap = (config->load_capacitance - 8) << 1;
     } else {
-      debug_printf("xtal load capacitance %d not supported\n",
+      chprintf(DEBUG_CHP,"xtal load capacitance %d not supported\r\n",
                    config->load_capacitance);
       xtalcap = 0;
     }
@@ -1261,11 +1261,11 @@ enum ax_vco_ranging_result ax_do_vco_ranging(ax_config* config,
   /* Check RNGERR bit */
   if (r & AX_PLLRANGING_RNGERR) {
     /* ranging error */
-    debug_printf("Ranging error!\n");
+    chprintf(DEBUG_CHP,"Ranging error!\r\n");
     return AX_VCO_RANGING_FAILED;
   }
 
-  debug_printf("Ranging done r = 0x%02x\n", r);
+  chprintf(DEBUG_CHP,"Ranging done r = 0x%02x\r\n", r);
 
   /* Update vco_range */
   synth->vco_range = r & 0xF;
@@ -1283,7 +1283,7 @@ enum ax_vco_ranging_result ax_vco_ranging(ax_config* config)
 {
   enum ax_vco_ranging_result resultA, resultB;
 
-  debug_printf("starting vco ranging...\n");
+  chprintf(DEBUG_CHP,"starting vco ranging...\r\n");
 
   /* Enable TCXO if used */
   if (config->tcxo_enable) { config->tcxo_enable(); }
@@ -1412,11 +1412,11 @@ int ax_force_quick_adjust_frequency(ax_config* config, uint32_t frequency)
 void ax_tx_on(ax_config* config, ax_modulation* mod)
 {
   if (mod->par.is_params_set != 0x51) {
-    debug_printf("mod->par must be set first! call ax_default_params...\n");
+    chprintf(DEBUG_CHP,"mod->par must be set first! call ax_default_params...\r\n");
     while(1);
   }
 
-  debug_printf("going for transmit...\n");
+  chprintf(DEBUG_CHP,"going for transmit...\n");
 
   /* Registers */
   ax_set_registers(config, mod, NULL);
@@ -1448,7 +1448,7 @@ void ax_tx_packet(ax_config* config, ax_modulation* mod,
                   uint8_t* packet, uint16_t length)
 {
   if (config->pwrmode != AX_PWRMODE_FULLTX) {
-    debug_printf("PWRMODE must be FULLTX before writing to FIFO!\n");
+    chprintf(DEBUG_CHP,"PWRMODE must be FULLTX before writing to FIFO!\r\n");
     return;
   }
 
@@ -1458,7 +1458,7 @@ void ax_tx_packet(ax_config* config, ax_modulation* mod,
   /* Write preamble and packet to the FIFO */
   ax_fifo_tx_data(config, mod, packet, length);
 
-  debug_printf("packet written to FIFO!\n");
+  chprintf(DEBUG_CHP,"packet written to FIFO!\n");
 }
 /**
  * Loads 1000 bits-times of zeros into the FIFO for tranmission
@@ -1466,7 +1466,7 @@ void ax_tx_packet(ax_config* config, ax_modulation* mod,
 void ax_tx_1k_zeros(ax_config* config)
 {
   if (config->pwrmode != AX_PWRMODE_FULLTX) {
-    debug_printf("PWRMODE must be FULLTX before writing to FIFO!\n");
+    chprintf(DEBUG_CHP,"PWRMODE must be FULLTX before writing to FIFO!\r\n");
     return;
   }
 
@@ -1483,7 +1483,7 @@ void ax_tx_1k_zeros(ax_config* config)
 void ax_rx_on(ax_config* config, ax_modulation* mod)
 {
   if (mod->par.is_params_set != 0x51) {
-    debug_printf("mod->par must be set first! call ax_default_params...\n");
+    chprintf(DEBUG_CHP,"mod->par must be set first! call ax_default_params...\r\n");
     while(1);
   }
 
@@ -1513,7 +1513,7 @@ void ax_rx_wor(ax_config* config, ax_modulation* mod,
                ax_wakeup_config* wakeup_config)
 {
   if (mod->par.is_params_set != 0x51) {
-    debug_printf("mod->par must be set first! call ax_default_params...\n");
+    chprintf(DEBUG_CHP,"mod->par must be set first! call ax_default_params...\r\n");
     while(1);
   }
 
@@ -1565,8 +1565,8 @@ int ax_rx_packet(ax_config* config, ax_packet* rx_pkt)
         case AX_FIFO_CHUNK_DATA:
           length = rx_chunk.chunk.data.length;
 
-          debug_printf("flags 0x%02x\n", rx_chunk.chunk.data.flags);
-          debug_printf("length %d\n", length);
+          chprintf(DEBUG_CHP,"flags 0x%02x\r\n", rx_chunk.chunk.data.flags);
+          chprintf(DEBUG_CHP,"length %d\r\n", length);
 
           if ((pkt_wr_index == 0) &&
               !(rx_chunk.chunk.data.flags & AX_FIFO_RXDATA_PKTSTART)) {
@@ -1595,7 +1595,7 @@ int ax_rx_packet(ax_config* config, ax_packet* rx_pkt)
             /*                rx_pkt->data[i]); */
             /* } */
             if (0) {
-              debug_printf("FEC FEC FEC 0x%02x\n",
+              chprintf(DEBUG_CHP,"FEC FEC FEC 0x%02x\r\n",
                            ax_hw_read_register_8(config, AX_REG_FECSTATUS));
             }
 
@@ -1605,14 +1605,14 @@ int ax_rx_packet(ax_config* config, ax_packet* rx_pkt)
           break;
 
         case AX_FIFO_CHUNK_RSSI:
-          debug_printf("rssi %d dB\n", rx_chunk.chunk.rssi);
+          chprintf(DEBUG_CHP,"rssi %d dB\r\n", rx_chunk.chunk.rssi);
 
           rx_pkt->rssi = rx_chunk.chunk.rssi;
           pkt_parts |= AX_PKT_STORE_RSSI;
           break;
 
         case AX_FIFO_CHUNK_RFFREQOFFS:
-          debug_printf("rf offset %d Hz\n", rx_chunk.chunk.rffreqoffs);
+          chprintf(DEBUG_CHP,"rf offset %d Hz\r\n", rx_chunk.chunk.rffreqoffs);
 
           rx_pkt->rffreqoffs = rx_chunk.chunk.rffreqoffs;
           pkt_parts |= AX_PKT_STORE_RF_OFFSET;
@@ -1620,7 +1620,7 @@ int ax_rx_packet(ax_config* config, ax_packet* rx_pkt)
 
         case AX_FIFO_CHUNK_FREQOFFS:
           offset = rx_chunk.chunk.freqoffs * 2000;
-          debug_printf("freq offset %f \n", offset / (1 << 16));
+          chprintf(DEBUG_CHP,"freq offset %f \r\n", offset / (1 << 16));
 
           /* todo add data to back */
           pkt_parts |= AX_PKT_STORE_FREQUENCY_OFFSET;
@@ -1633,7 +1633,7 @@ int ax_rx_packet(ax_config* config, ax_packet* rx_pkt)
           break;
         default:
 
-          debug_printf("some other chunk type 0x%02x\n", rx_chunk.chunk_t);
+          chprintf(DEBUG_CHP,"some other chunk type 0x%02x\r\n", rx_chunk.chunk_t);
           break;
       }
 
@@ -1667,7 +1667,7 @@ void ax_off(ax_config* config)
 
   ax_set_pwrmode(config, AX_PWRMODE_POWERDOWN);
 
-  debug_printf("ax_off complete!\n");
+  chprintf(DEBUG_CHP,"ax_off complete!\r\n");
 }
 
 /**
@@ -1737,20 +1737,20 @@ int ax_init(ax_config* config)
 
   /* Scratch */
   uint8_t scratch = ax_scratch(config);
-  debug_printf("Scratch 0x%X\n", scratch);
+  chprintf(DEBUG_CHP,"Scratch 0x%X\r\n", scratch);
 
   if (scratch != AX_SCRATCH) {
-    debug_printf("Bad scratch value.\n");
+    chprintf(DEBUG_CHP,"Bad scratch value.\r\n");
 
     return AX_INIT_BAD_SCRATCH;
   }
 
   /* Revision */
   uint8_t silicon_revision = ax_silicon_revision(config);
-  debug_printf("Silicon Revision 0x%X\n", silicon_revision);
+  chprintf(DEBUG_CHP,"Silicon Revision 0x%X\n", silicon_revision);
 
   if (silicon_revision != AX_SILICONREVISION) {
-    debug_printf("Bad Silicon Revision value.\n");
+    chprintf(DEBUG_CHP,"Bad Silicon Revision value.\r\n");
 
     return AX_INIT_BAD_REVISION;
   }

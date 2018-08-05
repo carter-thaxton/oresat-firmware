@@ -50,7 +50,7 @@ uint8_t ax_hw_read_register_long_8(ax_config* config, uint16_t reg)
   data[2] = 0xFF;
   //config->spi_transfer(data, 3);
   
-    uint8_t command_buf[5] = {0,0,0,0,0 };
+    //uint8_t command_buf[5] = {0,0,0,0,0 };
     uint8_t ret_value[5] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -59,9 +59,9 @@ uint8_t ax_hw_read_register_long_8(ax_config* config, uint16_t reg)
     spiUnselect(config->spip);
     status = ret_value[0];
 
-  status = ((uint16_t)data[0] << 8) & data[1];
+  status = ((uint16_t)ret_value[0] << 8) & ret_value[1];
 
-  return (uint8_t)data[2];
+  return (uint8_t)ret_value[2];
 }
 /**
  * Reads register, using long or short access as required. 8 bit
@@ -80,7 +80,7 @@ uint8_t ax_hw_read_register_8(ax_config* config, uint16_t reg)
     data[1] = 0xFF;
     //config->spi_transfer(data, 2);
 
-    uint8_t command_buf[5] = {0,0,0,0,0 };
+    //uint8_t command_buf[5] = {0,0,0,0,0 };
     uint8_t ret_value[5] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -90,9 +90,9 @@ uint8_t ax_hw_read_register_8(ax_config* config, uint16_t reg)
     status = ret_value[0];
 
     status &= 0xFF;
-    status |= ((uint16_t)data[0] << 8);
+    status |= ((uint16_t)ret_value[0] << 8);
 
-    return (uint8_t)data[1];
+    return (uint8_t)ret_value[1];
   }
 }
 /**
@@ -109,7 +109,7 @@ uint16_t ax_hw_write_register_long_8(ax_config* config, uint16_t reg, uint8_t va
   data[2] = value;
   //config->spi_transfer(data, 3);
 
-    uint8_t command_buf[5] = {0,0,0,0,0 };
+    //uint8_t command_buf[5] = {0,0,0,0,0 };
     uint8_t ret_value[5] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -118,7 +118,7 @@ uint16_t ax_hw_write_register_long_8(ax_config* config, uint16_t reg, uint8_t va
     spiUnselect(config->spip);
     status = ret_value[0];
 
-  status = ((uint16_t)data[0] << 8) & data[1];
+  status = ((uint16_t)ret_value[0] << 8) & ret_value[1];
 
   return status;
 }
@@ -138,7 +138,7 @@ uint16_t ax_hw_write_register_8(ax_config* config, uint16_t reg, uint8_t value)
     data[0] = ((reg & 0x7F) | 0x80);
     data[1] = value;
     //config->spi_transfer(data, 2);
-    uint8_t command_buf[5] = {0,0,0,0,0 };
+    //uint8_t command_buf[5] = {0,0,0,0,0 };
     uint8_t ret_value[5] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -148,7 +148,7 @@ uint16_t ax_hw_write_register_8(ax_config* config, uint16_t reg, uint8_t value)
     status = ret_value[0];
 
     status &= 0xFF;
-    status |= ((uint16_t)data[0] << 8);
+    status |= ((uint16_t)ret_value[0] << 8);
 
     return status;
   }
@@ -169,7 +169,7 @@ uint16_t ax_hw_write_register_long_32(ax_config* config, uint16_t reg, uint32_t 
   data[4] = (value >> 8);
   data[5] = (value >> 0);
   //config->spi_transfer(data, 6);
-    uint8_t command_buf[6] = {0,0,0,0,0 };
+    //uint8_t command_buf[6] = {0,0,0,0,0 };
     uint8_t ret_value[6] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -178,7 +178,7 @@ uint16_t ax_hw_write_register_long_32(ax_config* config, uint16_t reg, uint32_t 
     spiUnselect(config->spip);
     status = ret_value[0];
 
-  status = ((uint16_t)data[0] << 8) & data[1];
+  status = ((uint16_t)ret_value[0] << 8) & ret_value[1];
 
   return status;
 }
@@ -202,7 +202,7 @@ uint16_t ax_hw_write_register_32(ax_config* config, uint16_t reg, uint32_t value
     data[4] = (value >> 0);
 
     //config->spi_transfer(data, 5);
-    uint8_t command_buf[5] = {0,0,0,0,0 };
+    //uint8_t command_buf[5] = {0,0,0,0,0 };
     uint8_t ret_value[5] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -212,7 +212,7 @@ uint16_t ax_hw_write_register_32(ax_config* config, uint16_t reg, uint32_t value
     status = ret_value[0];
 
     status &= 0xFF;
-    status |= ((uint16_t)data[0] << 8);
+    status |= ((uint16_t)ret_value[0] << 8);
 
     return status;
   }
@@ -233,7 +233,7 @@ uint16_t ax_hw_read_register_long_bytes(ax_config* config, uint16_t reg,
   data[1] = (reg & 0xFF);
   memset(data+2, 0xFF, bytes);
   //config->spi_transfer(data, 2+bytes);
-  uint8_t command_buf[250] = {0,0,0,0,0 };
+  //uint8_t command_buf[250] = {0,0,0,0,0 };
   uint8_t ret_value[250] = {0,0,0,0,0 };
   //command_buf=data;
   spiSelect(config->spip);
@@ -242,9 +242,9 @@ uint16_t ax_hw_read_register_long_bytes(ax_config* config, uint16_t reg,
   spiUnselect(config->spip);
   status = ret_value[0];
 
-  status = ((uint16_t)data[0] << 8) & data[1];
+  status = ((uint16_t)ret_value[0] << 8) & ret_value[1];
 
-  memcpy(ptr, data+2, bytes);
+  memcpy(ptr, ret_value+2, bytes);
 
   return status;
 }
@@ -266,7 +266,7 @@ uint16_t ax_hw_read_register_bytes(ax_config* config, uint16_t reg,
     memset(data+1, 0xFF, bytes);
     //config->spi_transfer(data, 1+bytes);
 
-    uint8_t command_buf[250] = {0,0,0,0,0 };
+    //uint8_t command_buf[250] = {0,0,0,0,0 };
     uint8_t ret_value[250] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -276,9 +276,9 @@ uint16_t ax_hw_read_register_bytes(ax_config* config, uint16_t reg,
     status = ret_value[0];
 
     status &= 0xFF;
-    status |= ((uint16_t)data[0] << 8);
+    status |= ((uint16_t)ret_value[0] << 8);
 
-    memcpy(ptr, data+1, bytes);
+    memcpy(ptr, ret_value+1, bytes);
 
     return status;
   }
@@ -345,7 +345,7 @@ uint16_t ax_hw_write_fifo(ax_config* config, uint8_t* buffer, uint16_t length)
 
   //config->spi_transfer(data, length+1);
 
-    uint8_t command_buf[250] = {0,0,0,0,0 };
+    //uint8_t command_buf[250] = {0,0,0,0,0 };
     uint8_t ret_value[250] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -355,7 +355,7 @@ uint16_t ax_hw_write_fifo(ax_config* config, uint8_t* buffer, uint16_t length)
     status = ret_value[0];
 
   status &= 0xFF;
-  status |= ((uint16_t)data[0] << 8);
+  status |= ((uint16_t)ret_value[0] << 8);
 
   return status;
 }
@@ -371,7 +371,7 @@ uint16_t ax_hw_read_fifo(ax_config* config, uint8_t* buffer, uint16_t length)
 
   //config->spi_transfer(buffer, length);
 
-    uint8_t command_buf[250] = {0,0,0,0,0 };
+    //uint8_t command_buf[250] = {0,0,0,0,0 };
     uint8_t ret_value[250] = {0,0,0,0,0 };
     //command_buf=data;
     spiSelect(config->spip);
@@ -381,7 +381,7 @@ uint16_t ax_hw_read_fifo(ax_config* config, uint8_t* buffer, uint16_t length)
     status = ret_value[0];
 
   status &= 0xFF;
-  status |= ((uint16_t)buffer[0] << 8);
+  status |= ((uint16_t)ret_value[0] << 8);
 
   return status;
 }

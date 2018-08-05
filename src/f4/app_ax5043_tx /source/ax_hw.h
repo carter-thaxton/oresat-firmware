@@ -28,6 +28,9 @@
 #include <stdint.h>
 #include "ax.h"
 
+#define DEBUG_SERIAL  SD2
+#define DEBUG_CHP     ((BaseSequentialStream *) &DEBUG_SERIAL)
+
 uint8_t ax_hw_read_register_long_8(ax_config* config, uint16_t reg);
 uint16_t ax_hw_write_register_long_8(ax_config* config, uint16_t reg, uint8_t value);
 uint8_t ax_hw_read_register_8(ax_config* config, uint16_t reg);

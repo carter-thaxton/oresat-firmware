@@ -25,6 +25,9 @@
 #ifndef AX_FIFO_H
 #define AX_FIFO_H
 
+#define DEBUG_SERIAL  SD2
+#define DEBUG_CHP     ((BaseSequentialStream *) &DEBUG_SERIAL)
+
 /**
  * See AND9347-D-AX5043 Programming Manual.PDF
  */
