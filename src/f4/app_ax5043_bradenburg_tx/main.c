@@ -137,119 +137,13 @@ static void app_init(void)
 
 
 
-/*
-    uint8_t rx_buf[2]={0x00 ,0 };
-    uint8_t command_buf[2] = {0x00 ,0x00 };
-
-	while (true)
-    {
-    //uint8_t command_buf[6];
-    //uint8_t rx_bufi=0;
-
-    //command_buf[0] = AD_READ_BLK_LADR;
-
-    //command_buf[1] = (uint8_t) (AD_MISC_FW >> 24);
-    //command_buf[2] = (uint8_t) (AD_MISC_FW >> 16);
-    //command_buf[3] = (uint8_t) (AD_MISC_FW >> 8);
-    //command_buf[4] = (uint8_t) (AD_MISC_FW);
-    //ommand_buf[5] = 0;
-    //chprintf(DEBUG_CHP, "\r\r request-- 0x%x --\r\n", AD_MISC_FW);
-    //chprintf(DEBUG_CHP, "\r\r request-- 0x%x %x %x %x %x %x --\r\n", command_buf[0],command_buf[1],command_buf[2],command_buf[3],command_buf[4],command_buf[5]);
-
-	spiSelect(&SPID2);
-	spiStartExchange(&SPID2, 2, command_buf, rx_buf);
-	while((SPID2).state != SPI_READY) { }
-    chprintf(DEBUG_CHP, "\r\r Sent to Radio-- 0x%x 0x%x --\r\n", command_buf[0],command_buf[1]);
-    chprintf(DEBUG_CHP, "\r\r Radio returned-- 0x%x 0x%x --\r\n", rx_buf[0],rx_buf[1]);
-	spiUnselect(&SPID2);
-    chThdSleepMilliseconds(500);
-    command_buf[0] = command_buf[0] +1;
-
-    palTogglePad(GPIOA, GPIOA_SX_TESTOUT);
-    }
-*/
-
-/*
-    uint16_t reg=0;
-    uint8_t value=0;
-    uint8_t value1=0x55;
-    uint8_t ret_value[3]={0,0,0};
-
-
-    reg = AX5043_REG_REV;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-
-    reg = AX5043_REG_SCRATCH;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-
-    reg = AX5043_REG_SCRATCH;
-    value1 =value1+1;
-    ax5043_write_reg(&SPID2, reg, value1, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r written reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value1,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-
-    reg = AX5043_REG_SCRATCH;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-
-
-
-
-    chprintf(DEBUG_CHP, "Configuring AX5043\r\n");
-    chThdSleepMilliseconds(50);
-    ax5043_init(&SPID2);
-    chprintf(DEBUG_CHP, "done reseting AX5043\r\n");
-*/
-
-/*
-  while(true)
-  {
-
-    reg = 0x314;
-    ax5043_write_reg(&SPID2, reg, value1, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg 220 contents=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-
-    reg = 0x314;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg 220 contents=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-
-    reg = AX5043_REG_SCRATCH;
-    value1 =value1+1;
-    ax5043_write_reg(&SPID2, reg, value1, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r written reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value1,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-
-    reg = AX5043_REG_SCRATCH;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
-    chThdSleepMilliseconds(1500);
-  }*/
-
-/*
-  ax5043_prepare_tx(&SPID2);
-  while(true)
-  {
-    ax5043_transmit(&SPID2);
-    chThdSleepMilliseconds(3000);
-    chprintf(DEBUG_CHP, ".");
-  }
-*/
-
-
   ax_packet rx_pkt;
   uint8_t tx_pkt[0x100];
 
   ax_config config;
   memset(&config, 0, sizeof(ax_config));
 
-  config.clock_source = AX_CLOCK_SOURCE_TCXO;
+  //config.clock_source = AX_CLOCK_SOURCE_TCXO;
   config.f_xtal = 16369000;
 
   config.synthesiser.A.frequency = 434600000;
@@ -274,6 +168,7 @@ static void app_init(void)
   /*                          //////////////////////////////////////// */
      strcpy((char*)tx_pkt, "ughdffgiuhdfudshfdjshfdjshfsudhfdskjfdfd"); 
      ax_tx_packet(&config, &gmsk_hdlc_fec_modulation, tx_pkt, 40); 
+     chThdSleepMilliseconds(1000);
    } 
 
   /* -------- rx -------- */

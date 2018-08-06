@@ -1452,13 +1452,14 @@ void ax_tx_packet(ax_config* config, ax_modulation* mod,
     return;
   }
 
+  chprintf(DEBUG_CHP,"getting ready to write packet\r\n");
   /* Ensure the SVMODEM bit (POWSTAT) is set high (See 3.1.1) */
   while (!(ax_hw_read_register_8(config, AX_REG_POWSTAT) & AX_POWSTAT_SVMODEM));
 
   /* Write preamble and packet to the FIFO */
   ax_fifo_tx_data(config, mod, packet, length);
 
-  chprintf(DEBUG_CHP,"packet written to FIFO!\n");
+  chprintf(DEBUG_CHP,"packet written to FIFO!\r\n");
 }
 /**
  * Loads 1000 bits-times of zeros into the FIFO for tranmission
