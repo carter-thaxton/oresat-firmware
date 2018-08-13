@@ -151,25 +151,16 @@ static void app_init(void)
     uint8_t ret_value[3]={0,0,0};
 
 
-    reg = AX5043_REG_REV;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    ax5043_read_reg(&SPID2, AX5043_REG_REV, value, ret_value);
     chThdSleepMilliseconds(1500);
 
-    reg = AX5043_REG_SCRATCH;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, value, ret_value);
     chThdSleepMilliseconds(1500);
 
-    reg = AX5043_REG_SCRATCH;
-    value1 =value1+1;
-    ax5043_write_reg(&SPID2, reg, value1, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r written reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value1,ret_value[0],ret_value[1]);
+    ax5043_write_reg(&SPID2, AX5043_REG_SCRATCH, value1, ret_value);
     chThdSleepMilliseconds(1500);
 
-    reg = AX5043_REG_SCRATCH;
-    ax5043_read_reg(&SPID2, reg, value, ret_value);
-    //chprintf(DEBUG_CHP, "\r\r reg=0x%x, value=0x%x, ret_value=0x%x 0x%x, --\r\n", reg,value,ret_value[0],ret_value[1]);
+    ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, value, ret_value);
     chThdSleepMilliseconds(1500);
 
 
@@ -207,6 +198,7 @@ static void app_init(void)
   }*/
 
   ax5043_prepare_tx(&SPID2);
+
   while(true)
   {
     ax5043_transmit(&SPID2);

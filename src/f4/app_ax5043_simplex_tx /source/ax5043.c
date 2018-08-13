@@ -10,11 +10,11 @@
 
 
 /**
- * writes 1 byte to a register addressed in short format
+ * writes  to a register addressed in short format
  * @param conf the AX5043 configuration handler
  * @return 0 on success or appropriate negative error code
  */
-void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
+uint8_t ax5043_write_reg_spi(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
 {
   uint8_t command_buf[3] = {0,0,0};
   
@@ -41,17 +41,39 @@ void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret
     spiUnselect(spip);
     chprintf(DEBUG_CHP, "\r\r read after writting [0]=0x%x, [1]=0x%x , [2]=0x%x--\r\n", ret_value[0],ret_value[1],ret_value[2]);
   }
-
+  return ret_value[0];   //retun status while writting the register
 
 }
 
+
+/**
+ * writes  to a register addressed in short format. This function calls the above function
+ * an retries writting if the return code is not good (0x80) 
+ * @param conf the AX5043 configuration handler
+ * @return 0 on success or appropriate negative error code
+ */
+void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
+{
+  uint8_t return_val;
+  int num_retries = 100;
+  return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
+  
+  while (num_retries > 0 && return_val != 0x80)
+  {
+    chThdSleepMicroseconds(100);
+    return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
+    num_retries--;
+    chprintf(DEBUG_CHP, "\r\r num_retries= %d --\r\n", num_retries);
+  }
+
+}
 
 /**
  * reads 1 byte to a short register addressed in short format
  * @param conf the AX5043 configuration handler
  * @return 0 on success or appropriate negative error code
  */
-void ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
+uint8_t ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
 {
   uint8_t command_buf[3] = {0,0,0 };
   //uint8_t rx_buf[2]={0 ,0 };
@@ -65,6 +87,7 @@ void ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_
     while((*spip).state != SPI_READY) { }
     spiUnselect(spip);
     chprintf(DEBUG_CHP, "\r\r spi read reg=0x%x, value=0x%x ret=0x%x %x--\r\n", command_buf[0],command_buf[1], ret_value[0],ret_value[1]);
+    return ret_value[1];    //return the reg value when reading the register
   }
   else
   {
@@ -76,7 +99,9 @@ void ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_
     while((*spip).state != SPI_READY) { }
     spiUnselect(spip);
     chprintf(DEBUG_CHP, "\r\r spi read reg=0x%x %x, value=0x%x ret=0x%x %x %x--\r\n", command_buf[0],command_buf[1],command_buf[2],ret_value[0],ret_value[1],ret_value[2]);
+    return ret_value[2];    //return the reg value when reading the register
   }
+
 }
 
 
@@ -363,7 +388,7 @@ void ax5043_reset(SPIDriver * spip)
 {
 
   //uint8_t reg=0;
-  //uint8_t value=0;
+  uint8_t value;
   uint8_t ret_value[3]={0,0,0};
 
   spiSelect(spip);
@@ -376,17 +401,35 @@ void ax5043_reset(SPIDriver * spip)
   chThdSleepMicroseconds(10);
 
   //Reset the chip through powermode register 
+  //chprintf(DEBUG_CHP, "\r\r Powermode register write--\r\n");
   ax5043_write_reg(spip, AX5043_REG_PWRMODE, AX5043_RESET_BIT, ret_value);
-  chThdSleepMilliseconds(10);
+  //chThdSleepMilliseconds(10);
+  chThdSleepMicroseconds(10);
 
   //read the powermode register
-  //ax5043_read_reg(&SPID2, AX5043_REG_PWRMODE, value, ret_value);
+  //value=ax5043_read_reg(&SPID2, AX5043_REG_PWRMODE, value, ret_value);
   //write to powermode register for enabling XOEN and REFIN and shutdown mode
   //page 33 in programming manual
   //value = ret_value[1] | AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT;
   //value = AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT | AX5043_POWERDOWN;
   //ax5043_write_reg(spip, AX5043_REG_PWRMODE, value, ret_value);
   //chThdSleepMilliseconds(500);
+
+  ax5043_write_reg(spip, AX5043_REG_MODULATION, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  value = ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  if (value != 0x55)
+  {
+        chprintf(DEBUG_CHP, "Scratch register does not match\r\n");
+  }
+  value = ax5043_read_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
+  if (value != 0xAA)
+  {
+        chprintf(DEBUG_CHP, "Scratch register does not match\r\n");
+  }
+  ax5043_write_reg(spip, AX5043_REG_PINFUNCIRQ, (uint8_t)0x02, ret_value);
+  chThdSleepMilliseconds(1500);
+  
 
 }
 
@@ -415,7 +458,7 @@ void ax5043_prepare_tx(SPIDriver * spip)
 
 
 /**
- * Initializes AX5043
+ * Initializes AX5043. This is written based on easyax5043.c generated from AX Radiolab
  * @param conf the AX5043 configuration handler
  * @return 0 on success or appropriate negative error code
  */
@@ -424,13 +467,23 @@ void ax5043_init(SPIDriver * spip)
 
   //uint8_t reg=0;
   uint8_t value=0;
+  int num_retries;
+  uint8_t pll_range_done = 0;
+  uint8_t pll_range_after;
+  uint8_t vcoi_save;
   uint8_t ret_value[3]={0,0,0};
 
-  ax5043_reset(spip);
-  ax5043_shutdown(spip);
+  ax5043_reset(spip);         //reset is causing problems and hence disabling it.need to remove it
+  
+  //adding two more lines to diable the interrupts. Need to remove it later
+  //ax5043_write_reg(spip, AX5043_REG_IRQMASK0, (uint8_t)0x00, ret_value);
+  //ax5043_write_reg(spip, AX5043_REG_IRQMASK1, (uint8_t)0x00, ret_value);
+
+
+  //ax5043_shutdown(spip);
   ax5043_set_regs(spip);
-  ax5043_write_reg(spip, AX5043_REG_PINFUNCIRQ, (uint8_t)0x03, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTSTOREFLAGS, (uint8_t)0x13, ret_value);
+  //ax5043_write_reg(spip, AX5043_REG_PINFUNCIRQ, (uint8_t)0x03, ret_value);
+  //ax5043_write_reg(spip, AX5043_REG_PKTSTOREFLAGS, (uint8_t)0x13, ret_value);
   ax5043_set_regs_tx(spip);
 
   //value = AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT | AX5043_POWERDOWN;
@@ -443,7 +496,17 @@ void ax5043_init(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_FSKDEV1, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FSKDEV0, (uint8_t)0x00, ret_value);
 
-  //set frequency based on page 693 on conig.c and 1640 on easyax5043.c from 
+  //wait for Xtal
+  num_retries=100;
+  value=0;
+  while (num_retries > 0 && (value & 0x01) != 0x01  )
+  {
+    chThdSleepMilliseconds(1);
+    value=ax5043_read_reg(spip, AX5043_REG_XTALSTATUS, (uint8_t)0x00, ret_value); 
+    num_retries--;
+  }
+  
+  //set frequency based on line 693 on conig.c and 1640 on easyax5043.c from 
   //codeblocks generated code
   ax5043_write_reg(spip, AX5043_REG_FREQA0, (uint8_t)0xab, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FREQA1, (uint8_t)0xaa, ret_value); 
@@ -452,20 +515,71 @@ void ax5043_init(SPIDriver * spip)
 
 
   //PLL autoranging
-  ax5043_write_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x18, ret_value); 
-  chThdSleepMilliseconds(50);
+  ax5043_write_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x1a, ret_value); 
+  num_retries = 100; 
+  pll_range_done = 0;
+  while (num_retries > 0 && pll_range_done != 1)
+  {
+    chThdSleepMilliseconds(1);
+    value = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value);
+    if ((value & 0x08) == 0x00)
+      pll_range_done = 1;
+    num_retries--;
+  }
+  pll_range_after = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value); 
+  chprintf(DEBUG_CHP, "\r\r PLL ranging done. %d --\r\n");
 
 
   //VCOI calibration
+  ax5043_set_regs_tx(spip);
   ax5043_write_reg(spip, AX5043_REG_MODULATION, (uint8_t)0x08, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FSKDEV2, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FSKDEV1, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FSKDEV0, (uint8_t)0x00, ret_value);
-  ax5043_read_reg(spip, AX5043_REG_PLLLOOP, value, ret_value);
-  value = ret_value[1] | 0x04;
+  value=ax5043_read_reg(spip, AX5043_REG_PLLLOOP, (uint8_t)0x00, ret_value);
+  value = value | 0x04;
   ax5043_write_reg(spip, AX5043_REG_PLLLOOP, value, ret_value);
+  value=ax5043_read_reg(spip, AX5043_REG_0xF35, (uint8_t)0x00, ret_value);
+  value = value | 0x80;
+  if (2 & (uint8_t)~value)
+    ++value;
+  ax5043_write_reg(spip, AX5043_REG_0xF35, value, ret_value);
   ax5043_synth_tx(spip);
-  chThdSleepMilliseconds(50);
+  vcoi_save = ax5043_read_reg(spip, AX5043_REG_PLLVCOI, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)(pll_range_after & 0x0F), ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA0, (uint8_t)0xab, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQA1, (uint8_t)0xaa, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA2, (uint8_t)0x12, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA3, (uint8_t)0x09, ret_value); 
+  //tune voltage. doesn't make sense. So, not implementing it for now..
+  /*
+  num_retries = 64;
+  while (num_retries > 0)
+  {
+    ax5043_write_reg(spip, AX5043_REG_GPADCCTRL, (uint8_t)0x84, ret_value); 
+    do{} while (ax5043_read_reg(spip, AX5043_REG_GPADCCTRL, (uint8_t)0x00, ret_value) & 0x80);
+    num_retries--;
+  }
+  num_retries = 32;
+  while (num_retries > 0)
+  {
+    ax5043_write_reg(spip, AX5043_REG_GPADCCTRL, (uint8_t)0x84, ret_value); 
+    do{} while (ax5043_read_reg(spip, AX5043_REG_GPADCCTRL, (uint8_t)0x00, ret_value) & 0x80);
+    num_retries--;
+  }*/
+  ax5043_write_reg(spip, AX5043_REG_PLLVCOI, vcoi_save, ret_value);
+
+  ax5043_shutdown(spip);
+  ax5043_set_regs(spip);
+  ax5043_set_regs_rx(spip);
+  ax5043_write_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x0A, ret_value); 
+
+  ax5043_write_reg(spip, AX5043_REG_FREQA0, (uint8_t)0xab, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQA1, (uint8_t)0xaa, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA2, (uint8_t)0x12, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQA3, (uint8_t)0x09, ret_value); 
+
+  ax5043_write_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)(pll_range_after & 0x0F), ret_value); 
 
 }
 

@@ -633,8 +633,9 @@ typedef struct
 
 
 //function declaration starts here
+uint8_t ax5043_write_reg_spi(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
 void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
-void ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
+uint8_t ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
 void ax5043_set_regs(SPIDriver * spip);
 void ax5043_set_regs_tx(SPIDriver * spip);
 void ax5043_set_regs_rx(SPIDriver * spip);
