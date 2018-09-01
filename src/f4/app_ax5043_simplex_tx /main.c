@@ -149,20 +149,17 @@ static void app_init(void)
     uint8_t value=0;
     uint8_t value1=0x55;
     uint8_t ret_value[3]={0,0,0};
+    int i;
 
 
     ax5043_read_reg(&SPID2, AX5043_REG_REV, value, ret_value);
     chThdSleepMilliseconds(1500);
 
-    ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, value, ret_value);
-    chThdSleepMilliseconds(1500);
 
+    ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, value, ret_value);
     ax5043_write_reg(&SPID2, AX5043_REG_SCRATCH, value1, ret_value);
-    chThdSleepMilliseconds(1500);
-
     ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, value, ret_value);
     chThdSleepMilliseconds(1500);
-
 
 
 
@@ -201,10 +198,26 @@ static void app_init(void)
 
   while(true)
   {
-    ax5043_transmit(&SPID2);
+    ax5043_prepare_tx(&SPID2);
     chThdSleepMilliseconds(3000);
-    chprintf(DEBUG_CHP, ".");
+    chprintf(DEBUG_CHP, "Writting FIFO\r\n");
+    ax5043_transmit(&SPID2);
+    chThdSleepMilliseconds(1000);
+    ax5043_shutdown(&SPID2);
   }
+
+/*
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x10, ret_value);//packet length
+  //ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x24, ret_value);//packet details like raw packet
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x08, ret_value);//packet details like raw packet
+  for (i=0;i<16;i++)
+  {
+      ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//some random data
+  }
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit 
+*/    
+  //ax5043_transmit(&SPID2);
 
 }
 

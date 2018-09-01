@@ -168,7 +168,7 @@ static void app_init(void)
   /*                          //////////////////////////////////////// */
      strcpy((char*)tx_pkt, "ughdffgiuhdfudshfdjshfdjshfsudhfdskjfdfd"); 
      ax_tx_packet(&config, &gmsk_hdlc_fec_modulation, tx_pkt, 40); 
-     chThdSleepMilliseconds(1000);
+     chThdSleepMilliseconds(10000);
    } 
 
   /* -------- rx -------- */
