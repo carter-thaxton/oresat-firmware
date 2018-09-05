@@ -645,22 +645,22 @@ void ax5043_transmit(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x80, ret_value);//packet length
   //ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x24, ret_value);//packet details like raw packet
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x18, ret_value);//packet details like raw packet
-  for (i=0;i<32;i++)
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//packet details like raw packet
+  for (i=0;i<16;i++)
+  {
+      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x00, ret_value);//some random data
+  }
+for (i=0;i<48;i++)
   {
       ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xff, ret_value);//some random data
   }
 for (i=0;i<32;i++)
   {
-      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x00, ret_value);//some random data
-  }
-for (i=0;i<32;i++)
-  {
       ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xff, ret_value);//some random data
   }
 for (i=0;i<32;i++)
   {
-      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x00, ret_value);//some random data
+      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xff, ret_value);//some random data
   }
   ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit  
 

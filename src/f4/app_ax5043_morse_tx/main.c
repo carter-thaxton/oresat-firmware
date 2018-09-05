@@ -203,7 +203,7 @@ static void app_init(void)
     chprintf(DEBUG_CHP, "Writting FIFO\r\n");
     ax5043_transmit(&SPID2);
     chThdSleepMilliseconds(1000);
-    ax5043_shutdown(&SPID2);
+    //ax5043_shutdown(&SPID2);
   }
 
 /*
