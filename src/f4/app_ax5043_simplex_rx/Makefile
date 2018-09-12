@@ -84,7 +84,7 @@ endif
 #
 
 # Define project name here
-PROJECT   = app_ax5043_simplex_tx
+PROJECT   = app_ax5043_simplex_rx
 
 # Define board here
 BOARD     = ST_NUCLEO64_F446RE

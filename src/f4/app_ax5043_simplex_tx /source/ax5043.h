@@ -649,9 +649,11 @@ void ax5043_synth_tx(SPIDriver * spip);
 void ax5043_full_tx(SPIDriver * spip);
 void ax5043_reset(SPIDriver * spip);
 void ax5043_prepare_tx(SPIDriver * spip);
+void ax5043_prepare_rx(SPIDriver * spip);
 
 void ax5043_init(SPIDriver * spip);
 void ax5043_transmit(SPIDriver * spip);
+void ax5043_receive(SPIDriver * spip);
 
 #endif
 //! @}
