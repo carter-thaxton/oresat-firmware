@@ -145,11 +145,11 @@ static void app_init(void)
     palTogglePad(GPIOA, GPIOA_SX_TESTOUT);
     }
 */
-    uint16_t reg=0;
+    //uint16_t reg=0;
     uint8_t value=0;
     uint8_t value1=0x55;
     uint8_t ret_value[3]={0,0,0};
-    int i;
+    //int i;
 
 
     ax5043_read_reg(&SPID2, AX5043_REG_REV, value, ret_value);
@@ -198,7 +198,7 @@ static void app_init(void)
 
   while(true)
   {
-    ax5043_prepare_tx(&SPID2);
+    //ax5043_prepare_tx(&SPID2);
     chThdSleepMilliseconds(3000);
     chprintf(DEBUG_CHP, "Writting FIFO\r\n");
     ax5043_transmit(&SPID2);

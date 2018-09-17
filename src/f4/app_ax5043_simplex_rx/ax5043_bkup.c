@@ -16,10 +16,6 @@
 
 #include "ax5043.h"
 
-//some variables from configuration file
-const uint8_t axradio_phy_chanpllrnginit[1] = { 0x0a };
-const uint8_t axradio_phy_chanvcoiinit[1] = { 0x99 };
-uint8_t axradio_phy_chanpllrng[1];
 
 /**
  * writes  to an AX5043 register.
@@ -123,137 +119,135 @@ uint8_t ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t r
  * @return void 
  * TODO return a -ve return code if there are any errors
  */
-// TX: fcarrier=435.500MHz dev=  1.000kHz br=  4.800kBit/s pwr= 15.0dBm
-// RX: fcarrier=435.500MHz bw=  7.200kHz br=  4.800kBit/s
 void ax5043_set_regs(SPIDriver * spip)
 {
   uint8_t ret_value[3]={0,0,0};
-  ax5043_write_reg(spip, AX5043_REG_MODULATION,     (uint8_t)0x08, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_ENCODING,       (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FRAMING,        (uint8_t)0x26, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PINFUNCSYSCLK,  (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PINFUNCDCLK,    (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PINFUNCDATA,    (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PINFUNCANTSEL,  (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PINFUNCPWRAMP,  (uint8_t)0x07, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_WAKEUPXOEARLY,  (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_IFFREQ1,        (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_IFFREQ0,        (uint8_t)0x06, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_DECIMATION,     (uint8_t)0x29, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_RXDATARATE2,    (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_RXDATARATE1,    (uint8_t)0x3C, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_RXDATARATE0,    (uint8_t)0xF9, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MAXDROFFSET2,   (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MAXDROFFSET1,   (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MAXDROFFSET0,   (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET2,   (uint8_t)0x80, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET1,   (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET0,   (uint8_t)0x30, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDMAX1,       (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDMAX0,       (uint8_t)0xA6, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDMIN1,       (uint8_t)0xFF, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDMIN0,       (uint8_t)0x5A, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AMPLFILTER,     (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_RXPARAMSETS,    (uint8_t)0xF4, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AGCGAIN0,       (uint8_t)0xD6, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_AGCTARGET0,     (uint8_t)0x84, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_TIMEGAIN0,      (uint8_t)0xF8, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_DRGAIN0,        (uint8_t)0xF2, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PHASEGAIN0,     (uint8_t)0xC3, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINA0,(uint8_t)0x0F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINB0,(uint8_t)0x1F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINC0,(uint8_t)0x09, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND0,(uint8_t)0x09, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_MODULATION, (uint8_t)0x08, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_ENCODING, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FRAMING, (uint8_t)0x26, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PINFUNCSYSCLK, (uint8_t)0x01, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PINFUNCDCLK, (uint8_t)0x01, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PINFUNCDATA, (uint8_t)0x01, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PINFUNCANTSEL, (uint8_t)0x01, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PINFUNCPWRAMP, (uint8_t)0x07, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_WAKEUPXOEARLY, (uint8_t)0x01, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_IFFREQ1, (uint8_t)0x07, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_IFFREQ0, (uint8_t)0x77, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_DECIMATION, (uint8_t)0x04, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_RXDATARATE2, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_RXDATARATE1, (uint8_t)0x3C, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_RXDATARATE0, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MAXDROFFSET2, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MAXDROFFSET1, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MAXDROFFSET0, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET2, (uint8_t)0x80, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET1, (uint8_t)0x01, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET0, (uint8_t)0x30, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FSKDMAX1, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FSKDMAX0, (uint8_t)0xA6, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FSKDMIN1, (uint8_t)0xFF, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FSKDMIN0, (uint8_t)0x5A, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AMPLFILTER, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_RXPARAMSETS, (uint8_t)0xF4, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AGCGAIN0, (uint8_t)0x93, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_AGCTARGET0, (uint8_t)0x84, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_TIMEGAIN0, (uint8_t)0xF8, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_DRGAIN0, (uint8_t)0xF2, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PHASEGAIN0, (uint8_t)0xC3, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINA0, (uint8_t)0x0F, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINB0, (uint8_t)0x1F, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINC0, (uint8_t)0x06, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND0, (uint8_t)0x06, ret_value);
   ax5043_write_reg(spip, AX5043_REG_AMPLITUDEGAIN0, (uint8_t)0x06, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV10,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV00,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_BBOFFSRES0,     (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AGCGAIN1,       (uint8_t)0xD6, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AGCTARGET1,     (uint8_t)0x84, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_AGCAHYST1,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AGCMINMAX1,     (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TIMEGAIN1,      (uint8_t)0xF6, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_DRGAIN1,        (uint8_t)0xF1, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PHASEGAIN1,     (uint8_t)0xC3, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINA1,(uint8_t)0x0F, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINB1,(uint8_t)0x1F, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINC1,(uint8_t)0x09, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND1,(uint8_t)0x09, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV10, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV00, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_BBOFFSRES0, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AGCGAIN1, (uint8_t)0x93, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AGCTARGET1, (uint8_t)0x84, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_AGCAHYST1, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AGCMINMAX1, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TIMEGAIN1, (uint8_t)0xF6, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_DRGAIN1, (uint8_t)0xF1, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PHASEGAIN1, (uint8_t)0xC3, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINA1, (uint8_t)0x0F, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINB1, (uint8_t)0x1F, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINC1, (uint8_t)0x06, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND1, (uint8_t)0x06, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_AMPLITUDEGAIN1, (uint8_t)0x06, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV11,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV01,      (uint8_t)0x25, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FOURFSK1,       (uint8_t)0x16, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_BBOFFSRES1,     (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_AGCGAIN3,       (uint8_t)0xFF, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AGCTARGET3,     (uint8_t)0x84, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AGCAHYST3,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_AGCMINMAX3,     (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TIMEGAIN3,      (uint8_t)0xF5, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_DRGAIN3,        (uint8_t)0xF0, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PHASEGAIN3,     (uint8_t)0xC3, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINA3,(uint8_t)0x0F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINB3,(uint8_t)0x1F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINC3,(uint8_t)0x0D, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND3,(uint8_t)0x0D, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV11, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV01, (uint8_t)0x43, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FOURFSK1, (uint8_t)0x16, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_BBOFFSRES1, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_AGCGAIN3, (uint8_t)0xFF, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AGCTARGET3, (uint8_t)0x84, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AGCAHYST3, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_AGCMINMAX3, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TIMEGAIN3, (uint8_t)0xF5, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_DRGAIN3, (uint8_t)0xF0, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PHASEGAIN3, (uint8_t)0xC3, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINA3, (uint8_t)0x0F, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINB3, (uint8_t)0x1F, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAINC3, (uint8_t)0x0A, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND3, (uint8_t)0x0A, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_AMPLITUDEGAIN3, (uint8_t)0x06, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV13,      (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV03,      (uint8_t)0x25, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FOURFSK3,       (uint8_t)0x16, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_BBOFFSRES3,     (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MODCFGF,        (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDEV2,        (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDEV1,        (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDEV0,        (uint8_t)0x5E, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_MODCFGA,        (uint8_t)0x05, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_TXRATE2,        (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TXRATE1,        (uint8_t)0x06, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TXRATE0,        (uint8_t)0x8E, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TXPWRCOEFFB1,   (uint8_t)0x0F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TXPWRCOEFFB0,   (uint8_t)0xFF, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PLLVCOI,        (uint8_t)0x98, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PLLRNGCLK,      (uint8_t)0x05, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_BBTUNE,         (uint8_t)0x0F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_BBOFFSCAP,      (uint8_t)0x77, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRCFG,     (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PKTLENCFG,      (uint8_t)0x80, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PKTLENOFFSET,   (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PKTMAXLEN,      (uint8_t)0xC8, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT3,     (uint8_t)0xAA, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT2,     (uint8_t)0xCC, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT1,     (uint8_t)0xAA, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT0,     (uint8_t)0xCC, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MATCH0LEN,      (uint8_t)0x1F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MATCH0MAX,      (uint8_t)0x1F, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MATCH1PAT1,     (uint8_t)0x55, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_MATCH1PAT0,     (uint8_t)0x55, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_MATCH1LEN,      (uint8_t)0x8A, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MATCH1MAX,      (uint8_t)0x0A, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TMGTXBOOST,     (uint8_t)0x5B, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TMGTXSETTLE,    (uint8_t)0x3E, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TMGRXBOOST,     (uint8_t)0x5B, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TMGRXSETTLE,    (uint8_t)0x3E, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_TMGRXOFFSACQ,   (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV13, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV03, (uint8_t)0x43, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FOURFSK3, (uint8_t)0x16, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_BBOFFSRES3, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MODCFGF, (uint8_t)0x03, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FSKDEV2, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FSKDEV1, (uint8_t)0x16, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FSKDEV0, (uint8_t)0xC1, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_MODCFGA, (uint8_t)0x05, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_TXRATE2, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TXRATE1, (uint8_t)0x44, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TXRATE0, (uint8_t)0x44, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TXPWRCOEFFB1, (uint8_t)0x0F, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TXPWRCOEFFB0, (uint8_t)0xFF, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PLLVCOI, (uint8_t)0x98, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PLLRNGCLK, (uint8_t)0x05, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_BBTUNE, (uint8_t)0x0B, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_BBOFFSCAP, (uint8_t)0x77, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRCFG, (uint8_t)0x01, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PKTLENCFG, (uint8_t)0x80, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PKTLENOFFSET, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PKTMAXLEN, (uint8_t)0xC8, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT3, (uint8_t)0xAA, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT2, (uint8_t)0xCC, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT1, (uint8_t)0xAA, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MATCH0PAT0, (uint8_t)0xCC, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MATCH0LEN, (uint8_t)0x1F, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MATCH0MAX, (uint8_t)0x1F, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MATCH1PAT1, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_MATCH1PAT0, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_MATCH1LEN, (uint8_t)0x8A, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MATCH1MAX, (uint8_t)0x0A, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TMGTXBOOST, (uint8_t)0x5B, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TMGTXSETTLE, (uint8_t)0x3E, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TMGRXBOOST, (uint8_t)0x5B, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TMGRXSETTLE, (uint8_t)0x3E, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_TMGRXOFFSACQ, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_TMGRXCOARSEAGC, (uint8_t)0x9C, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_TMGRXRSSI,      (uint8_t)0x03, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_TMGRXRSSI, (uint8_t)0x03, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_TMGRXPREAMBLE2, (uint8_t)0x35, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_RSSIABSTHR,     (uint8_t)0xE0, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_BGNDRSSITHR,    (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PKTCHUNKSIZE,   (uint8_t)0x0D, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTACCEPTFLAGS, (uint8_t)0x3f, ret_value); //original 20, accept all errors
-  ax5043_write_reg(spip, AX5043_REG_DACVALUE1,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_DACVALUE0,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_DACCONFIG,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_REF,            (uint8_t)0x03, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_XTALOSC,        (uint8_t)0x04, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_XTALAMPL,       (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_0xF1C,          (uint8_t)0x07, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_0xF21,          (uint8_t)0x68, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_0xF22,          (uint8_t)0XFF, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_0xF23,          (uint8_t)0x84, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_0xF26,          (uint8_t)0x98, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_0xF34,          (uint8_t)0x28, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_0xF35,          (uint8_t)0x11, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_0xF44,          (uint8_t)0x25, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_RSSIABSTHR, (uint8_t)0xE0, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_BGNDRSSITHR, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_PKTCHUNKSIZE, (uint8_t)0x0D, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTACCEPTFLAGS, (uint8_t)0x20, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_DACVALUE1, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_DACVALUE0, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_DACCONFIG, (uint8_t)0x00, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_REF, (uint8_t)0x03, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_XTALOSC, (uint8_t)0x04, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_XTALAMPL, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_0xF1C, (uint8_t)0x07, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_0xF21, (uint8_t)0x68, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_0xF22, (uint8_t)0XFF, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_0xF23, (uint8_t)0x84, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_0xF26, (uint8_t)0x98, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_0xF34, (uint8_t)0x28, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_0xF35, (uint8_t)0x11, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_0xF44, (uint8_t)0x25, ret_value);
 }
 
 
@@ -266,12 +260,12 @@ void ax5043_set_regs(SPIDriver * spip)
 void ax5043_set_regs_tx(SPIDriver * spip)
 {
   uint8_t ret_value[3]={0,0,0};
-  ax5043_write_reg(spip, AX5043_REG_PLLLOOP,        (uint8_t)0x0B, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_PLLCPI,         (uint8_t)0x10, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PLLVCODIV,      (uint8_t)0x24, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_XTALCAP,        (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_0xF00,          (uint8_t)0x0F, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_0xF18,          (uint8_t)0x06, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PLLLOOP, (uint8_t)0x0B, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_PLLCPI, (uint8_t)0x10, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PLLVCODIV, (uint8_t)0x24, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_XTALCAP, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_0xF00, (uint8_t)0x0F, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_0xF18, (uint8_t)0x06, ret_value);
 }
 
 
@@ -284,12 +278,12 @@ void ax5043_set_regs_tx(SPIDriver * spip)
 void ax5043_set_regs_rx(SPIDriver * spip)
 {
   uint8_t ret_value[3]={0,0,0};
-  ax5043_write_reg(spip, AX5043_REG_PLLLOOP,        (uint8_t)0x0B, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_PLLCPI,         (uint8_t)0x10, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PLLVCODIV,      (uint8_t)0x25, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_XTALCAP,        (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_0xF00,          (uint8_t)0x0F, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_0xF18,          (uint8_t)0x02, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PLLLOOP, (uint8_t)0x0B, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_PLLCPI, (uint8_t)0x10, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PLLVCODIV, (uint8_t)0x25, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_XTALCAP, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_0xF00, (uint8_t)0x0F, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_0xF18, (uint8_t)0x02, ret_value);
 }
 
 
@@ -302,9 +296,9 @@ void ax5043_set_regs_rx(SPIDriver * spip)
 void ax5043_set_regs_rxcont(SPIDriver * spip)
 {
   uint8_t ret_value[3]={0,0,0};
-  ax5043_write_reg(spip, AX5043_REG_TMGRXAGC,       (uint8_t)0x00, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_TMGRXAGC, (uint8_t)0x00, ret_value); 
   ax5043_write_reg(spip, AX5043_REG_TMGRXPREAMBLE1, (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTMISCFLAGS,   (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTMISCFLAGS, (uint8_t)0x00, ret_value);
 }
 
 
@@ -317,10 +311,10 @@ void ax5043_set_regs_rxcont(SPIDriver * spip)
 void ax5043_set_regs_rxcont_singleparamset(SPIDriver * spip)
 {
   uint8_t ret_value[3]={0,0,0};
-  ax5043_write_reg(spip, AX5043_REG_RXPARAMSETS,    (uint8_t)0xFF, ret_value); 
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV13,      (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV03,      (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_AGCGAIN3,       (uint8_t)0xE7, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_RXPARAMSETS, (uint8_t)0xFF, ret_value); 
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV13, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV03, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_AGCGAIN3, (uint8_t)0xB5, ret_value);
 }
 
 /**
@@ -518,7 +512,6 @@ void ax5043_prepare_tx(SPIDriver * spip)
   ax5043_standby(spip);
   ax5043_fifo_en(spip);
   ax5043_set_regs_tx(spip);
-  ax5043_init_registers_common(spip);
   ax5043_write_reg(spip, AX5043_REG_FIFOTHRESH1, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FIFOTHRESH0, (uint8_t)0x80, ret_value);
   ax5043_write_reg(spip, AX5043_REG_IRQMASK0, (uint8_t)0x00, ret_value);
@@ -548,13 +541,12 @@ void ax5043_prepare_rx(SPIDriver * spip)
 {
 
   //uint8_t reg=0;
-  int8_t value= (int8_t)(0xF9 + 64);
+  int8_t value=0xF9 + 64;
   uint8_t ret_value[3]={0,0,0};
 
   ax5043_standby(spip);
   ax5043_fifo_en(spip);
   ax5043_set_regs_rx(spip);
-  ax5043_init_registers_common(spip);
   ax5043_write_reg(spip, AX5043_REG_FIFOTHRESH1, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FIFOTHRESH0, (uint8_t)0x80, ret_value);
   ax5043_write_reg(spip, AX5043_REG_IRQMASK0, (uint8_t)0x00, ret_value);
@@ -573,40 +565,6 @@ void ax5043_prepare_rx(SPIDriver * spip)
 
   ax5043_write_reg(spip, AX5043_REG_RSSIREFERENCE, (int8_t)value, ret_value);
   ax5043_full_rx(spip);
-}
-
-
-void ax5043_init_registers_common(SPIDriver * spip)
-{
-    uint8_t ret_value[3]={0,0,0};
-    uint8_t rng = axradio_phy_chanpllrng[0];
-    if (rng & 0x20)
-        chprintf(DEBUG_CHP, "\r\r ERROR at ax5043_init_registers_common --\r\n");
-    if ( ax5043_read_reg(spip, AX5043_REG_PLLLOOP, (uint8_t)0x00, ret_value) & 0x80) {
-        ax5043_write_reg(spip, AX5043_REG_PLLRANGINGB, (uint8_t)(rng & 0x0F), ret_value);
-    } else {
-       ax5043_write_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)(rng & 0x0F), ret_value);
-    }
-    rng = axradio_get_pllvcoi(spip);
-   if (rng & 0x80)
-        ax5043_write_reg(spip, AX5043_REG_PLLVCOI, (uint8_t)(rng), ret_value);
-}
-
- 
-
-uint8_t axradio_get_pllvcoi(SPIDriver * spip)
-{
-    uint8_t ret_value[3]={0,0,0};
-    uint8_t x = axradio_phy_chanvcoiinit[0];
-    if (x & 0x80) {
-      if (!(axradio_phy_chanpllrnginit[0] & 0xF0)) {
-        x += (axradio_phy_chanpllrng[0] & 0x0F) - (axradio_phy_chanpllrnginit[0] & 0x0F);
-       x &= 0x3f;
-        x |= 0x80;
-      }
-      return x;
-    }
-    return ax5043_read_reg(spip, AX5043_REG_PLLVCOI, (uint8_t)0x00, ret_value);
 }
 
 
@@ -685,8 +643,8 @@ void ax5043_init(SPIDriver * spip)
       pll_range_done = 1;
     num_retries--;
   }
-  axradio_phy_chanpllrng[0] = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value); 
-  chprintf(DEBUG_CHP, "\r\r PLL ranging done. %d --\r\n", axradio_phy_chanpllrng[0]);
+  value = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value); 
+  chprintf(DEBUG_CHP, "\r\r PLL ranging done. %d --\r\n", value);
 
 
   //VCOI calibration
@@ -758,8 +716,8 @@ void ax5043_init(SPIDriver * spip)
       pll_range_done = 1;
     num_retries--;
   }
-  axradio_phy_chanpllrng[0] = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value); 
-  chprintf(DEBUG_CHP, "\r\r PLL ranging done. %d --\r\n", axradio_phy_chanpllrng[0]);
+  value = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value); 
+  chprintf(DEBUG_CHP, "\r\r PLL ranging done. %d --\r\n", value);
 
 }
 
@@ -779,25 +737,25 @@ void ax5043_transmit(SPIDriver * spip)
   uint8_t ret_value[3]={0,0,0};
   int i=0;
   ax5043_full_tx(spip);
-
   ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
-
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)AX5043_REPEATDATA_CMD, ret_value);//The data follows
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x01, ret_value);//flag
-  //preamble
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x04, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);//some random data
-
-
-
-  ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
-
+ 
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x0E, ret_value);//packet length
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x15, ret_value);//packet length
   //ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x24, ret_value);//packet details like raw packet
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x02, ret_value);//packet details like raw packet
-
-  //sync word
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x03, ret_value);//packet details like raw packet
+  //preamble
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x33, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x33, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x33, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x33, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xCC, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xCC, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xCC, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xCC, ret_value);
