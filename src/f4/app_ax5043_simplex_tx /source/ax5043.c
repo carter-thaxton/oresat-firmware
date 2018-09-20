@@ -532,8 +532,8 @@ void ax5043_prepare_tx(SPIDriver * spip)
   //set address mask
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0xFF, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0xFF, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK2, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK3, (uint8_t)0x00, ret_value);
   ax5043_full_tx(spip);
 }
 
@@ -568,8 +568,8 @@ void ax5043_prepare_rx(SPIDriver * spip)
   //set address mask
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0xFF, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0xFF, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK2, (uint8_t)0x00, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK3, (uint8_t)0x00, ret_value);
 
   ax5043_write_reg(spip, AX5043_REG_RSSIREFERENCE, (int8_t)value, ret_value);
   ax5043_full_rx(spip);
@@ -782,35 +782,50 @@ void ax5043_transmit(SPIDriver * spip)
 
   ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
 
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)AX5043_REPEATDATA_CMD, ret_value);//The data follows
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x21, ret_value);//flag
-  //preamble
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x04, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//some random data
+  //send out the preamble
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)(AX5043_REPEATDATA_CMD|0x02), ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//preamble flag
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xE0, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//preamble
 
-
-
-  ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
-
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x0E, ret_value);//packet length
-  //ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x24, ret_value);//packet details like raw packet
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x22, ret_value);//packet details like raw packet
 
   //sync word
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xA1, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x18, ret_value);//sync flags
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xCC, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xCC, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xAA, ret_value);
+
+
+/* seems this will not get executed based on logic
+  //send out the preamble. again?
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)(AX5043_REPEATDATA_CMD|0x02), ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//preamble flag
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x1F, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//preamble
+
+
+  //writting preamble based on address register. pretty weird.
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x41), ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x1C, ret_value);//preamble flag
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);
+*/
+
+  //write MAC and packet
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x0C, ret_value);//packet length
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x03, ret_value);//packet details like raw packet
+
 
   //length
-  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x08, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x0B, ret_value);  
   //address values
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x33, ret_value); 
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x34, ret_value); 
   for (i=0;i<8;i++)
   {
-      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//some random data
+      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x36, ret_value);//some random data
   }
   ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit  
 
@@ -830,7 +845,7 @@ void ax5043_receive(SPIDriver * spip)
   uint8_t value=0;
   uint8_t ret_value[3]={0,0,0};
   //ax5043_full_rx(spip);
-  ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
+  //ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
 
   value=ax5043_read_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x00, ret_value);
   chprintf(DEBUG_CHP, "FIFO status value 0x%x \r\n", value);
