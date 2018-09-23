@@ -16,6 +16,9 @@
 #ifndef AX5043SPI_H_
 #define AX5043SPI_H_
 
+#define DEBUG_SERIAL  SD2
+#define DEBUG_CHP     ((BaseSequentialStream *) &DEBUG_SERIAL)
+
 #include <stdint.h>
 
 #include "ax5043spi_p.h"
