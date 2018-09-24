@@ -16,7 +16,7 @@
 
 /***************************************************
  *     Modification Log
- *     04/15/2018    Malay Das    Initial Code.  
+ *     04/15/2018    Malay Das    Initial Code.
  ***************************************************/
 
 
@@ -24,6 +24,8 @@
  * Include Files
  */
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 #include "ch.h"
 #include "hal.h"
 #include "chprintf.h"
@@ -31,11 +33,22 @@
 #include "util_numbers.h"
 #include "ax5043.h"
 
+
 //#include "adf7030.h"
 
 #define     DEBUG_SERIAL                    SD2
 #define     DEBUG_CHP                       ((BaseSequentialStream *) &DEBUG_SERIAL)
 
+const struct axradio_address remoteaddr_tx = {
+	{ 0x33, 0x34, 0x00, 0x00}
+};
+const struct axradio_address_mask localaddr_tx = {
+	{ 0x32, 0x34, 0x00, 0x00},
+	{ 0xFF, 0xFF, 0x00, 0x00}
+};
+const uint8_t demo_packet[] =  { 0x00, 0x00, 0x44, 0xaa, 0x9e, 0x3a };
+const uint8_t framing_insert_counter = 1;
+const uint8_t framing_counter_pos = 0;
 
 /*
  * Serial Driver Configuration
@@ -105,11 +118,11 @@ static void app_init(void)
              , version_info.hardware.id_center
              , version_info.hardware.id_low
             );
-		
-    chThdSleepMilliseconds(1000);	
+
+    chThdSleepMilliseconds(1000);
     spiStart(&SPID1, &spicfg_rx);
     spiStart(&SPID2, &spicfg_tx);
-	//spiSelect(&SPID2); 
+	//spiSelect(&SPID2);
     chThdSleepMilliseconds(1000);
 
 
@@ -194,8 +207,9 @@ static void app_init(void)
     chThdSleepMilliseconds(1500);
   }*/
 
-  ax5043_prepare_tx(&SPID2);
+  //ax5043_prepare_tx(&SPID2);
 
+/*
   while(true)
   {
     //ax5043_prepare_tx(&SPID2);
@@ -205,6 +219,7 @@ static void app_init(void)
     chThdSleepMilliseconds(1000);
     ax5043_shutdown(&SPID2);
   }
+*/
 
 /*
   ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows
@@ -215,9 +230,26 @@ static void app_init(void)
   {
       ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//some random data
   }
-  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit 
-*/    
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit
+*/
   //ax5043_transmit(&SPID2);
+
+	for (;;) {
+	    static uint8_t demo_packet_[sizeof(demo_packet)];
+	    uint16_t pkt_counter = 0;
+
+	    ++pkt_counter;
+	    memcpy(demo_packet_, demo_packet, sizeof(demo_packet));
+	    if (framing_insert_counter) {
+	        demo_packet_[framing_counter_pos] = (uint8_t)(pkt_counter & 0xFF);
+	        demo_packet_[framing_counter_pos+1] = (uint8_t)((pkt_counter>>8) & 0xFF);
+	    }
+
+		chprintf(DEBUG_CHP,"INFO: Sending another packet...\r\n");
+		transmit_packet(&SPID2, &remoteaddr_tx, demo_packet_, sizeof(demo_packet));
+
+        chThdSleepMilliseconds(3000);
+	}
 
 }
 
@@ -226,7 +258,7 @@ static void app_init(void)
  * main loop blinks the led
  */
 static void main_loop(void)
-{   
+{
     chThdSleepMilliseconds(500);
 
 
@@ -260,6 +292,3 @@ int main(void)
     main_loop();
     return 0;
 }
-
-
-
