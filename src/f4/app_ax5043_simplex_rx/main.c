@@ -16,7 +16,7 @@
 
 /***************************************************
  *     Modification Log
- *     04/15/2018    Malay Das    Initial Code.  
+ *     04/15/2018    Malay Das    Initial Code.
  ***************************************************/
 
 
@@ -105,11 +105,11 @@ static void app_init(void)
              , version_info.hardware.id_center
              , version_info.hardware.id_low
             );
-		
-    chThdSleepMilliseconds(1000);	
+
+    chThdSleepMilliseconds(1000);
     spiStart(&SPID1, &spicfg_rx);
     spiStart(&SPID2, &spicfg_tx);
-	//spiSelect(&SPID2); 
+	//spiSelect(&SPID2);
     chThdSleepMilliseconds(1000);
 
 
@@ -157,8 +157,11 @@ static void app_init(void)
 
 
     ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, value, ret_value);
+    chprintf(DEBUG_CHP, "\r\r scratch ret_value=0x%x 0x%x, --\r\n", ret_value[0],ret_value[1]);
     ax5043_write_reg(&SPID2, AX5043_REG_SCRATCH, value1, ret_value);
+    chprintf(DEBUG_CHP, "\r\r scratch ret_value=0x%x 0x%x, --\r\n", ret_value[0],ret_value[1]);
     ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, value, ret_value);
+    chprintf(DEBUG_CHP, "\r\r scratch ret_value=0x%x 0x%x, --\r\n", ret_value[0],ret_value[1]);
     chThdSleepMilliseconds(1500);
 
 
@@ -216,8 +219,8 @@ static void app_init(void)
   {
       ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//some random data
   }
-  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit 
-*/    
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit
+*/
   //ax5043_transmit(&SPID2);
 
 }
@@ -227,7 +230,7 @@ static void app_init(void)
  * main loop blinks the led
  */
 static void main_loop(void)
-{   
+{
     chThdSleepMilliseconds(500);
 
 
@@ -261,6 +264,3 @@ int main(void)
     main_loop();
     return 0;
 }
-
-
-

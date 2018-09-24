@@ -117,16 +117,17 @@ uint8_t ax5043_write_reg_spi(SPIDriver * spip, uint16_t reg, uint8_t value, uint
 void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
 {
   uint8_t return_val;
-  int num_retries = 5;
+  //int num_retries = 1;
   return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
   
+/*
   while (num_retries > 0 && return_val != 0x80)
   {
     chThdSleepMicroseconds(100);
     return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
     num_retries--;
     //chprintf(DEBUG_CHP, "\r\r num_retries= %d --\r\n", num_retries);
-  }
+  }*/
 
 }
 
@@ -531,23 +532,27 @@ void ax5043_reset(SPIDriver * spip)
   //value = value | AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT;
   value = AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT | AX5043_POWERDOWN;
   ax5043_write_reg(spip, AX5043_REG_PWRMODE, value, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PWRMODE, value, ret_value);
   chThdSleepMilliseconds(1);
 
   //ax5043_write_reg(spip, AX5043_REG_MODULATION, (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
   value = ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, (uint8_t)0x00, ret_value);
   if (value != 0x55)
   {
-        chprintf(DEBUG_CHP, "Scratch register does not match\r\n");
+        chprintf(DEBUG_CHP, "Scratch register does not match 0\r\n");
   }
-  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  chThdSleepMilliseconds(10);
   value = ax5043_read_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x00, ret_value);
   if (value != 0xAA)
   {
-        chprintf(DEBUG_CHP, "Scratch register does not match\r\n");
+        chprintf(DEBUG_CHP, "Scratch register does not match 1\r\n");
   }
   ax5043_write_reg(spip, AX5043_REG_PINFUNCIRQ, (uint8_t)0x02, ret_value);
-  chThdSleepMilliseconds(1);
+  chThdSleepMilliseconds(10);
   
 
 }

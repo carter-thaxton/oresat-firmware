@@ -16,7 +16,7 @@
 
 /***************************************************
  *     Modification Log
- *     04/15/2018    Malay Das    Initial Code.  
+ *     04/15/2018    Malay Das    Initial Code.
  ***************************************************/
 
 
@@ -44,9 +44,9 @@ const struct axradio_address remoteaddr_tx = {
 };
 const struct axradio_address_mask localaddr_tx = {
 	{ 0x32, 0x34, 0x00, 0x00},
-	{ 0x00, 0x00, 0x00, 0x00}
+	{ 0xFF, 0xFF, 0x00, 0x00}
 };
-const uint8_t demo_packet[] =  { 0x00, 0x00, 0x55, 0x66, 0x77, 0x88 };
+const uint8_t demo_packet[] =  { 0x00, 0x00, 0x44, 0xaa, 0x9e, 0x3a };
 const uint8_t framing_insert_counter = 1;
 const uint8_t framing_counter_pos = 0;
 
@@ -118,11 +118,11 @@ static void app_init(void)
              , version_info.hardware.id_center
              , version_info.hardware.id_low
             );
-		
-    chThdSleepMilliseconds(1000);	
+
+    chThdSleepMilliseconds(1000);
     spiStart(&SPID1, &spicfg_rx);
     spiStart(&SPID2, &spicfg_tx);
-	//spiSelect(&SPID2); 
+	//spiSelect(&SPID2);
     chThdSleepMilliseconds(1000);
 
 
@@ -230,8 +230,8 @@ static void app_init(void)
   {
       ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//some random data
   }
-  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit 
-*/    
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit
+*/
   //ax5043_transmit(&SPID2);
 
 	for (;;) {
@@ -258,7 +258,7 @@ static void app_init(void)
  * main loop blinks the led
  */
 static void main_loop(void)
-{   
+{
     chThdSleepMilliseconds(500);
 
 
@@ -292,6 +292,3 @@ int main(void)
     main_loop();
     return 0;
 }
-
-
-

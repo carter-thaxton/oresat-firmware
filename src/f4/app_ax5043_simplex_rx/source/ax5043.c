@@ -16,10 +16,61 @@
 
 #include "ax5043.h"
 
-//some variables from configuration file
+
+
+
+
+// physical layer from config.c file generated from radiolab
+const uint8_t axradio_phy_pn9 = 0;
+const uint8_t axradio_phy_nrchannels = 1;
+const uint32_t axradio_phy_chanfreq[1] = { 0x0912aaab };
 const uint8_t axradio_phy_chanpllrnginit[1] = { 0x0a };
-const uint8_t axradio_phy_chanvcoiinit[1] = { 0x99 };
+const uint8_t axradio_phy_chanvcoiinit[1] = { 0x98 };
 uint8_t axradio_phy_chanpllrng[1];
+uint8_t axradio_phy_chanvcoi[1];
+const uint8_t axradio_phy_vcocalib = 0;
+const int32_t axradio_phy_maxfreqoffset = 913;
+const int8_t axradio_phy_rssioffset = 64;
+// axradio_phy_rssioffset is added to AX5043_RSSIREFERENCE and subtracted from chip RSSI value to prevent overflows (8bit RSSI only goes down to -128)
+// axradio_phy_rssioffset is also added to AX5043_RSSIABSTHR
+const int8_t axradio_phy_rssireference = (int8_t)(0xF6 + 64);
+const int8_t axradio_phy_channelbusy = -90 + 64;
+const uint16_t axradio_phy_cs_period = 7; // timer0 units, 10ms
+const uint8_t axradio_phy_cs_enabled = 0;
+const uint8_t axradio_phy_lbt_retries = 0;
+const uint8_t axradio_phy_lbt_forcetx = 0;
+const uint16_t axradio_phy_preamble_wor_longlen = 4; // wor_longlen + wor_len totals to 240.0ms plus 112bits
+const uint16_t axradio_phy_preamble_wor_len = 160;
+const uint16_t axradio_phy_preamble_longlen = 0;
+const uint16_t axradio_phy_preamble_len = 32;
+const uint8_t axradio_phy_preamble_byte = 0x55;
+const uint8_t axradio_phy_preamble_flags = 0x38;
+const uint8_t axradio_phy_preamble_appendbits = 0;
+const uint8_t axradio_phy_preamble_appendpattern = 0x00;
+
+//framing variables generated from radiolab
+const uint8_t axradio_framing_maclen = 3;
+const uint8_t axradio_framing_addrlen = 2;
+const uint8_t axradio_framing_destaddrpos = 1;
+const uint8_t axradio_framing_sourceaddrpos = 0xff;
+const uint8_t axradio_framing_lenpos = 0;
+const uint8_t axradio_framing_lenoffs = 0;
+const uint8_t axradio_framing_lenmask = 0xff;
+const uint8_t axradio_framing_swcrclen = 0;
+
+const uint8_t axradio_framing_synclen = 32;
+const uint8_t axradio_framing_syncword[] = { 0xcc, 0xaa, 0xcc, 0xaa};
+const uint8_t axradio_framing_syncflags = 0x38;
+const uint8_t axradio_framing_enable_sfdcallback = 0;
+
+const uint32_t axradio_framing_ack_timeout = 25; // 98.9ms in wtimer0 units (640Hz)
+const uint32_t axradio_framing_ack_delay = 313; // 1.0ms in wtimer1 units (20MHz/64)
+const uint8_t axradio_framing_ack_retransmissions = 0;
+const uint8_t axradio_framing_ack_seqnrpos = 0xff;
+
+const uint8_t axradio_framing_minpayloadlen = 1; // must be set to 1 if the payload directly follows the destination address, and a CRC is configured
+//WOR
+const uint16_t axradio_wor_period = 128;
 
 /**
  * writes  to an AX5043 register.
@@ -66,16 +117,17 @@ uint8_t ax5043_write_reg_spi(SPIDriver * spip, uint16_t reg, uint8_t value, uint
 void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
 {
   uint8_t return_val;
-  int num_retries = 5;
+  //int num_retries = 1;
   return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
   
+/*
   while (num_retries > 0 && return_val != 0x80)
   {
     chThdSleepMicroseconds(100);
     return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
     num_retries--;
     //chprintf(DEBUG_CHP, "\r\r num_retries= %d --\r\n", num_retries);
-  }
+  }*/
 
 }
 
@@ -470,7 +522,7 @@ void ax5043_reset(SPIDriver * spip)
 
   //Reset the chip through powermode register 
   ax5043_write_reg(spip, AX5043_REG_PWRMODE, AX5043_RESET_BIT, ret_value);
-  chThdSleepMilliseconds(10);
+  chThdSleepMilliseconds(1);
   //chThdSleepMicroseconds(5);
 
   //read the powermode register
@@ -480,23 +532,27 @@ void ax5043_reset(SPIDriver * spip)
   //value = value | AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT;
   value = AX5043_OSC_EN_BIT | AX5043_REF_EN_BIT | AX5043_POWERDOWN;
   ax5043_write_reg(spip, AX5043_REG_PWRMODE, value, ret_value);
-  chThdSleepMilliseconds(10);
+  ax5043_write_reg(spip, AX5043_REG_PWRMODE, value, ret_value);
+  chThdSleepMilliseconds(1);
 
   //ax5043_write_reg(spip, AX5043_REG_MODULATION, (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
   value = ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, (uint8_t)0x00, ret_value);
   if (value != 0x55)
   {
-        chprintf(DEBUG_CHP, "Scratch register does not match\r\n");
+        chprintf(DEBUG_CHP, "Scratch register does not match 0\r\n");
   }
-  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
+  chThdSleepMilliseconds(10);
   value = ax5043_read_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x00, ret_value);
   if (value != 0xAA)
   {
-        chprintf(DEBUG_CHP, "Scratch register does not match\r\n");
+        chprintf(DEBUG_CHP, "Scratch register does not match 1\r\n");
   }
   ax5043_write_reg(spip, AX5043_REG_PINFUNCIRQ, (uint8_t)0x02, ret_value);
-  chThdSleepMilliseconds(1500);
+  chThdSleepMilliseconds(10);
   
 
 }
@@ -534,7 +590,13 @@ void ax5043_prepare_tx(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0xFF, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK2, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK3, (uint8_t)0x00, ret_value);
-  ax5043_full_tx(spip);
+
+  //wait for xtal
+  while ((ax5043_read_reg(spip, AX5043_REG_XTALSTATUS, (uint8_t)0x00, ret_value) & 0x01) == 0) {
+    chThdSleepMilliseconds(1);
+  }
+
+  //ax5043_full_tx(spip);
 }
 
 
@@ -679,7 +741,7 @@ void ax5043_init(SPIDriver * spip)
   pll_range_done = 0;
   while (num_retries > 0 && pll_range_done != 1)
   {
-    chThdSleepMilliseconds(10);
+    chThdSleepMilliseconds(1);
     value = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value);
     if ((value & 0x10) == 0x00)
       pll_range_done = 1;
@@ -752,7 +814,7 @@ void ax5043_init(SPIDriver * spip)
   pll_range_done = 0;
   while (num_retries > 0 && pll_range_done != 1)
   {
-    chThdSleepMilliseconds(10);
+    chThdSleepMilliseconds(1);
     value = ax5043_read_reg(spip, AX5043_REG_PLLRANGINGA, (uint8_t)0x00, ret_value);
     if ((value & 0x10) == 0x00)
       pll_range_done = 1;
@@ -766,7 +828,7 @@ void ax5043_init(SPIDriver * spip)
 
 
 /**
- * Transmits a packet
+ * Transmits a packet. Not used in thsi version of code.
  * @param conf the AX5043 configuration handler
  * @return void 
  * TODO return a -ve return code if there are any errors
@@ -863,6 +925,252 @@ void ax5043_receive(SPIDriver * spip)
 
 
 }
+
+
+
+/**
+ * writes to FIFO
+ * Takn from Bradenburg library which seems to be taken from onSemi's code
+ * @param conf the AX5043 configuration handler
+ * @return void 
+ * 
+ */
+void ax5043_writefifo(SPIDriver * spip,const uint8_t *ptr, uint8_t len)
+{
+    uint8_t ret_value[3]={0,0,0};
+	if (!len)
+		return;
+	do {
+		ax5043_write_reg(spip, AX5043_REG_FIFODATA, *ptr++, ret_value);
+	} while (--len);
+}
+
+/**
+ * Transmits a packet
+ * Takn from Bradenburg library which seems to be taken from onSemi's code
+ * @param conf the AX5043 configuration handler
+ * @return void 
+ * 
+ */
+
+void transmit_loop(SPIDriver * spip, axradio_trxstate_t axradio_trxstate, uint16_t axradio_txbuffer_len,uint8_t axradio_txbuffer[], uint16_t axradio_txbuffer_cnt)
+{
+    uint8_t ret_value[3]={0,0,0};
+
+    for (;;) {
+        uint8_t cnt = ax5043_read_reg(spip,AX5043_REG_FIFOFREE0, (uint8_t)0x00, ret_value);
+
+        if (ax5043_read_reg(spip,AX5043_REG_FIFOFREE1, (uint8_t)0x00, ret_value))
+            cnt = 0xff;
+
+        switch (axradio_trxstate) {
+        case trxstate_tx_longpreamble:
+            if (!axradio_txbuffer_cnt) {
+                axradio_trxstate = trxstate_tx_shortpreamble;
+                axradio_txbuffer_cnt = axradio_phy_preamble_len;
+                goto shortpreamble;
+            }
+            if (cnt < 4) {
+                ax5043_write_reg(spip,AX5043_REG_FIFOSTAT, 4, ret_value); // commit
+                chThdSleepMilliseconds(1);
+                continue;
+            }
+            cnt = 7;
+            if (axradio_txbuffer_cnt < 7)
+                cnt = axradio_txbuffer_cnt;
+            axradio_txbuffer_cnt -= cnt;
+            cnt <<= 5;
+            ax5043_write_reg(spip,AX5043_REG_FIFODATA, AX5043_FIFOCMD_REPEATDATA | (3 << 5), ret_value);
+            ax5043_write_reg(spip,AX5043_REG_FIFODATA, axradio_phy_preamble_flags, ret_value);
+            ax5043_write_reg(spip,AX5043_REG_FIFODATA, cnt, ret_value);
+            ax5043_write_reg(spip,AX5043_REG_FIFODATA, axradio_phy_preamble_byte, ret_value);
+            break;
+
+        case trxstate_tx_shortpreamble:
+        shortpreamble:
+            if (!axradio_txbuffer_cnt) {
+                if (cnt < 15) {
+                    ax5043_write_reg(spip,AX5043_REG_FIFOSTAT, 4, ret_value); // commit
+                    chThdSleepMilliseconds(1);
+                    continue;
+                }
+                if (axradio_phy_preamble_appendbits) {
+                    uint8_t byte;
+                    ax5043_write_reg(spip,AX5043_REG_FIFODATA, AX5043_FIFOCMD_DATA | (2 << 5), ret_value);
+                    ax5043_write_reg(spip,AX5043_REG_FIFODATA, 0x1C, ret_value);
+                    byte = axradio_phy_preamble_appendpattern;
+                    if (ax5043_read_reg(spip,AX5043_REG_PKTADDRCFG, (uint8_t)0x00, ret_value) & 0x80) {
+                        // msb first -> stop bit below
+                        byte &= 0xFF << (8-axradio_phy_preamble_appendbits);
+                        byte |= 0x80 >> axradio_phy_preamble_appendbits;
+                    } else {
+                         // lsb first -> stop bit above
+                        byte &= 0xFF >> (8-axradio_phy_preamble_appendbits);
+                        byte |= 0x01 << axradio_phy_preamble_appendbits;
+                    }
+                    ax5043_write_reg(spip,AX5043_REG_FIFODATA, byte, ret_value);
+                }
+                if ((ax5043_read_reg(spip,AX5043_REG_FRAMING, (uint8_t)0x00, ret_value) & 0x0E) == 0x06 && axradio_framing_synclen) {
+                    // write SYNC word if framing mode is raw_patternmatch, might use SYNCLEN > 0 as a criterion, but need to make sure SYNCLEN=0 for WMBUS (chip automatically sends SYNCWORD but matching in RX works via MATCH0PAT)
+                    uint8_t len_byte = axradio_framing_synclen;
+                    uint8_t i = (len_byte & 0x07) ? 0x04 : 0;
+                    // SYNCLEN in bytes, rather than bits. Ceiled to next integer e.g. fractional bits are counted as full bits;v
+                    len_byte += 7;
+                    len_byte >>= 3;
+                    ax5043_write_reg(spip,AX5043_REG_FIFODATA, AX5043_FIFOCMD_DATA | ((len_byte + 1) << 5), ret_value);
+                    ax5043_write_reg(spip,AX5043_REG_FIFODATA, axradio_framing_syncflags | i, ret_value);
+                    for (i = 0; i < len_byte; ++i) {
+                        // better put a brace, it might prevent SDCC from optimizing away the assignement...
+                        ax5043_write_reg(spip,AX5043_REG_FIFODATA, axradio_framing_syncword[i], ret_value);
+                    }
+                }
+                axradio_trxstate = trxstate_tx_packet;
+                continue;
+            }
+            if (cnt < 4) {
+                ax5043_write_reg(spip,AX5043_REG_FIFOSTAT, 4, ret_value); // commit
+                chThdSleepMilliseconds(1);
+                continue;
+            }
+            cnt = 255;
+            if (axradio_txbuffer_cnt < 255*8)
+                cnt = axradio_txbuffer_cnt >> 3;
+            if (cnt) {
+                axradio_txbuffer_cnt -= ((uint16_t)cnt) << 3;
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, AX5043_FIFOCMD_REPEATDATA | (3 << 5), ret_value);
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, axradio_phy_preamble_flags, ret_value);
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, cnt, ret_value);
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, axradio_phy_preamble_byte, ret_value);
+                continue;
+            }
+            {
+                uint8_t byte = axradio_phy_preamble_byte;
+                cnt = axradio_txbuffer_cnt;
+                axradio_txbuffer_cnt = 0;
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, AX5043_FIFOCMD_DATA | (2 << 5), ret_value);
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, 0x1C, ret_value);
+                if (ax5043_read_reg(spip,AX5043_REG_PKTADDRCFG, (uint8_t)0x00, ret_value) & 0x80) {
+                    // msb first -> stop bit below
+                    byte &= 0xFF << (8-cnt);
+                    byte |= 0x80 >> cnt;
+                } else {
+                     // lsb first -> stop bit above
+                    byte &= 0xFF >> (8-cnt);
+                    byte |= 0x01 << cnt;
+                }
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, byte, ret_value);
+            }
+            continue;
+
+        case trxstate_tx_packet:
+            if (cnt < 11) {
+                ax5043_write_reg(spip,AX5043_REG_FIFOSTAT, 4, ret_value); // commit
+                chThdSleepMilliseconds(1);
+                continue;
+            }
+            {
+                uint8_t flags = 0;
+                if (!axradio_txbuffer_cnt)
+                    flags |= 0x01; // flag byte: pkt_start
+                {
+                    uint16_t len = axradio_txbuffer_len - axradio_txbuffer_cnt;
+                    cnt -= 3;
+                    if (cnt >= len) {
+                        cnt = len;
+                        flags |= 0x02; // flag byte: pkt_end
+                    }
+                }
+                if (!cnt)
+                    goto pktend;
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, AX5043_FIFOCMD_DATA | (7 << 5), ret_value);
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, cnt + 1, ret_value); // write FIFO chunk length byte (length includes the flag byte, thus the +1)
+                ax5043_write_reg(spip,AX5043_REG_FIFODATA, flags, ret_value);
+                ax5043_writefifo(spip,&axradio_txbuffer[axradio_txbuffer_cnt], cnt);
+                axradio_txbuffer_cnt += cnt;
+                if (flags & 0x02)
+                    goto pktend;
+            }
+            break;
+
+        default:
+            chprintf(DEBUG_CHP, "ERROR: Unexpected state found in transmit_isr \r\n");
+        }
+    }
+
+pktend:
+    ax5043_write_reg(spip,AX5043_REG_RADIOEVENTMASK0, 0x01, ret_value); // enable REVRDONE event
+    ax5043_write_reg(spip,AX5043_REG_FIFOSTAT, 4, ret_value); // commit
+}
+
+
+
+
+
+/**
+ * Transmits a packet
+ * Takn from Bradenburg library which seems to be taken from onSemi's code
+ * @param conf the AX5043 configuration handler
+ * @return void 
+ * 
+ */
+
+uint8_t transmit_packet(SPIDriver * spip, const struct axradio_address *addr, const uint8_t *pkt, uint16_t pktlen) 
+{
+    uint8_t ret_value[3]={0,0,0};
+	axradio_trxstate_t axradio_trxstate;
+	uint16_t axradio_txbuffer_len;
+	uint8_t axradio_txbuffer[PKTDATA_BUFLEN];
+	struct axradio_address_mask axradio_localaddr;
+	uint16_t axradio_txbuffer_cnt = 0;
+
+    axradio_txbuffer_len = pktlen + axradio_framing_maclen;
+    if (axradio_txbuffer_len > sizeof(axradio_txbuffer))
+        return AXRADIO_ERR_INVALID;
+    memset(axradio_txbuffer, 0, axradio_framing_maclen);
+    memcpy(&axradio_txbuffer[axradio_framing_maclen], pkt, pktlen);
+    if (axradio_framing_destaddrpos != 0xff)
+        memcpy(&axradio_txbuffer[axradio_framing_destaddrpos], &addr->addr, axradio_framing_addrlen);
+    if (axradio_framing_sourceaddrpos != 0xff)
+        memcpy(&axradio_txbuffer[axradio_framing_sourceaddrpos], &axradio_localaddr.addr, axradio_framing_addrlen);
+    if (axradio_framing_lenmask) {
+        uint8_t len_byte = (uint8_t)(axradio_txbuffer_len - axradio_framing_lenoffs) & axradio_framing_lenmask; // if you prefer not counting the len byte itself, set LENOFFS = 1
+        axradio_txbuffer[axradio_framing_lenpos] = (axradio_txbuffer[axradio_framing_lenpos] & (uint8_t)~axradio_framing_lenmask) | len_byte;
+    }
+/*
+    if (axradio_framing_swcrclen)
+        axradio_txbuffer_len = axradio_framing_append_crc(axradio_txbuffer, axradio_txbuffer_len);
+    if (axradio_phy_pn9)
+        pn9_buffer(axradio_txbuffer, axradio_txbuffer_len, 0x1ff, -(ax5043_read_reg(spip, AX5043_REG_ENCODING, (uint8_t)0x00, ret_value) & 0x01));
+    axradio_txbuffer_cnt = axradio_phy_preamble_longlen;
+*/
+    ax5043_prepare_tx(spip);
+
+    ax5043_read_reg(spip,AX5043_REG_RADIOEVENTREQ0, (uint8_t)0x00, ret_value);; // make sure REVRDONE bit is cleared, so it is a reliable indicator that the packet is out
+    ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, 3, ret_value); // clear FIFO data & flags (prevent transmitting anything left over in the FIFO, this has no effect if the FIFO is not powerered, in this case it is reset any way)
+    axradio_trxstate = trxstate_tx_longpreamble;
+
+    if ((ax5043_read_reg(spip,AX5043_REG_MODULATION, (uint8_t)0x00, ret_value) & 0x0F) == 9) { // 4-FSK
+        ax5043_write_reg(spip,AX5043_REG_FIFODATA, AX5043_FIFOCMD_DATA | (7 << 5), ret_value);
+        ax5043_write_reg(spip,AX5043_REG_FIFODATA, 2, ret_value);  // length (including flags)
+        ax5043_write_reg(spip,AX5043_REG_FIFODATA, 0x01, ret_value);  // flag PKTSTART -> dibit sync
+        ax5043_write_reg(spip,AX5043_REG_FIFODATA, 0x11, ret_value); // dummy byte for forcing dibit sync
+    }
+    transmit_loop(spip, axradio_trxstate, axradio_txbuffer_len, axradio_txbuffer, axradio_txbuffer_cnt);
+    ax5043_write_reg(spip,AX5043_REG_PWRMODE, AX5043_FULL_TX, ret_value);
+
+    ax5043_read_reg(spip,AX5043_REG_RADIOEVENTREQ0, (uint8_t)0x00, ret_value);
+    //printf("INFO: Waiting for transmission to complete\n");
+    while (ax5043_read_reg(spip,AX5043_REG_RADIOSTATE, (uint8_t)0x00, ret_value) != 0) {
+        chThdSleepMilliseconds(1);
+    }
+    //printf("INFO: Transmission complete\n");
+
+    ax5043_write_reg(spip,AX5043_REG_RADIOEVENTMASK0, 0x00, ret_value);
+
+    return AXRADIO_ERR_NOERROR;
+}
+
+
 
 
 
