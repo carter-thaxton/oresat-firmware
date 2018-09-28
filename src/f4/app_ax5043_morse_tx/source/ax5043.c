@@ -62,16 +62,17 @@ uint8_t ax5043_write_reg_spi(SPIDriver * spip, uint16_t reg, uint8_t value, uint
 void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
 {
   uint8_t return_val;
-  int num_retries = 5;
+  //int num_retries = 5;
   return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
   
+/*
   while (num_retries > 0 && return_val != 0x80)
   {
     chThdSleepMicroseconds(100);
     return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
     num_retries--;
     //chprintf(DEBUG_CHP, "\r\r num_retries= %d --\r\n", num_retries);
-  }
+  }*/
 
 }
 
@@ -693,21 +694,21 @@ void ax5043_transmit(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x80, ret_value);//packet length
   //ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x24, ret_value);//packet details like raw packet
   ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//packet details like raw packet
-  for (i=0;i<16;i++)
-  {
-      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x00, ret_value);//some random data
-  }
-for (i=0;i<48;i++)
-  {
-      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xff, ret_value);//some random data
-  }
-for (i=0;i<32;i++)
+  for (i=0;i<32;i++)
   {
       ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xff, ret_value);//some random data
   }
 for (i=0;i<32;i++)
   {
       ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x00, ret_value);//some random data
+  }
+for (i=0;i<32;i++)
+  {
+      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0x00, ret_value);//some random data
+  }
+for (i=0;i<31;i++)
+  {
+      ax5043_write_reg(spip, AX5043_REG_FIFODATA, (uint8_t)0xff, ret_value);//some random data
   }
   ax5043_write_reg(spip, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit 
 
