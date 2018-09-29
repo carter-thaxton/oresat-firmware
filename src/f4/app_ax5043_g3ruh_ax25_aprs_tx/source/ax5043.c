@@ -116,9 +116,10 @@ uint8_t ax5043_write_reg_spi(SPIDriver * spip, uint16_t reg, uint8_t value, uint
  */
 void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[])
 {
-  uint8_t return_val;
+  //uint8_t return_val;
   //int num_retries = 1;
-  return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
+  //return_val=ax5043_write_reg_spi(spip, reg, value, ret_value);
+  ax5043_write_reg_spi(spip, reg, value, ret_value);
   
 /*
   while (num_retries > 0 && return_val != 0x80)
@@ -523,7 +524,7 @@ void ax5043_reset(SPIDriver * spip)
 
   //Reset the chip through powermode register 
   ax5043_write_reg(spip, AX5043_REG_PWRMODE, AX5043_RESET_BIT, ret_value);
-  chThdSleepMilliseconds(1);
+  chThdSleepMilliseconds(10);
   //chThdSleepMicroseconds(5);
 
   //read the powermode register
@@ -540,7 +541,7 @@ void ax5043_reset(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
   ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0xAA, ret_value);
   value = ax5043_read_reg(&SPID2, AX5043_REG_SCRATCH, (uint8_t)0x00, ret_value);
-  if (value != 0x55)
+  if (value != 0xAA)
   {
         chprintf(DEBUG_CHP, "Scratch register does not match 0\r\n");
   }
@@ -548,7 +549,7 @@ void ax5043_reset(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x55, ret_value);
   chThdSleepMilliseconds(10);
   value = ax5043_read_reg(spip, AX5043_REG_SCRATCH, (uint8_t)0x00, ret_value);
-  if (value != 0xAA)
+  if (value != 0x55)
   {
         chprintf(DEBUG_CHP, "Scratch register does not match 1\r\n");
   }
@@ -588,7 +589,7 @@ void ax5043_prepare_tx(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_PKTADDR3, (uint8_t)0x00, ret_value);
   //set address mask
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0xFF, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0xFF, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK2, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK3, (uint8_t)0x00, ret_value);
 
@@ -630,7 +631,7 @@ void ax5043_prepare_rx(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_PKTADDR3, (uint8_t)0x00, ret_value);
   //set address mask
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0xFF, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0xFF, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK2, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK3, (uint8_t)0x00, ret_value);
 
