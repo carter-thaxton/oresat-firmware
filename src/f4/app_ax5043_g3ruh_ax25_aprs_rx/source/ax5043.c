@@ -653,7 +653,7 @@ void ax5043_prepare_rx(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_PKTADDR2, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDR3, (uint8_t)0x00, ret_value);
   //set address mask
-  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0xFF, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK0, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK1, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK2, (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PKTADDRMASK3, (uint8_t)0x00, ret_value);
