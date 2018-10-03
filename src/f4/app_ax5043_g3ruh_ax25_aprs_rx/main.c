@@ -198,7 +198,7 @@ static void app_init(void)
   }*/
 
   ax5043_prepare_rx(&SPID2);
-  ax5043_set_regs_rxcont(&SPID2);
+  //ax5043_set_regs_rxcont(&SPID2);
   while(true)
   {
     //ax5043_prepare_rx(&SPID2);
