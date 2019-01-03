@@ -19,7 +19,7 @@
 
 /**
  * The maximum allowed frame size
-
+ */
 #define MAX_FRAME_LEN                   1024
 
 #define RX_BAUDRATE                     9600
@@ -36,7 +36,6 @@
 
 #define MIN_RF_FREQ_EXT_VCO_RFDIV1      (MIN_RF_FREQ_EXT_VCO_RFDIV0 / 2)
 #define MAX_RF_FREQ_EXT_VCO_RFDIV1      (MAX_RF_FREQ_EXT_VCO_RFDIV0 / 2)
- */
 
 /******************************************************************************
  ********************  AX5043 control SPI registers ***************************
@@ -465,21 +464,6 @@
 #define AX5043_TXPWR_CMD                0xFD
 
 
-//fifo commands
-#define AX5043_FIFOCMD_NOP			0x00
-#define AX5043_FIFOCMD_DATA			0x01
-#define AX5043_FIFOCMD_REPEATDATA	0x02
-#define AX5043_FIFOCMD_TIMER		0x10
-#define AX5043_FIFOCMD_RSSI			0x11
-#define AX5043_FIFOCMD_FREQOFFS		0x12
-#define AX5043_FIFOCMD_RFFREQOFFS	0x13
-#define AX5043_FIFOCMD_DATARATE		0x14
-#define AX5043_FIFOCMD_ANTRSSI		0x15
-#define AX5043_FIFOCMD_TXCTRL		0x1C
-#define AX5043_FIFOCMD_TXPWR		0x1D
-
-
-
 /**
  * Poweramp pin function, output/Z pull up for board 0.9 with diodes for 1.4V
  */
@@ -562,27 +546,11 @@
 #define AX5043_RF_SWITCH_DISABLE        ANTSEL_OUTPUT_0
 
 
-#define PKTDATA_BUFLEN 260
 
 
-/**
- * Define error codes
- */
-#define AXRADIO_ERR_NOERROR                     0x00
-#define AXRADIO_ERR_NOTSUPPORTED                0x01
-#define AXRADIO_ERR_BUSY                        0x02
-#define AXRADIO_ERR_TIMEOUT                     0x03
-#define AXRADIO_ERR_INVALID                     0x04
-#define AXRADIO_ERR_NOCHIP                      0x05
-#define AXRADIO_ERR_RANGING                     0x06
-#define AXRADIO_ERR_LOCKLOST                    0x07
-#define AXRADIO_ERR_RETRANSMISSION              0x08
-#define AXRADIO_ERR_RESYNC                      0x09
-#define AXRADIO_ERR_RESYNCTIMEOUT               0x0a
-#define AXRADIO_ERR_RECEIVESTART                0x0b
 
-#define	EXIT_FAILURE	1	// Failing exit status.  
-#define	EXIT_SUCCESS	0	// Successful exit status. 
+
+
 
 /**
  * Frequency mode A or B actually selects at which registers
@@ -664,37 +632,6 @@ typedef struct
 } ax5043_conf_t;
 
 
-typedef enum {
-    trxstate_off,
-    trxstate_rx,
-    trxstate_rxwor,
-    trxstate_wait_xtal,
-    trxstate_xtal_ready,
-    trxstate_pll_ranging,
-    trxstate_pll_ranging_done,
-    trxstate_pll_settling,
-    trxstate_pll_settled,
-    trxstate_tx_xtalwait,
-    trxstate_tx_longpreamble,
-    trxstate_tx_shortpreamble,
-    trxstate_tx_packet,
-    trxstate_tx_waitdone,
-    trxstate_txcw_xtalwait,
-    trxstate_txstream_xtalwait,
-    trxstate_txstream
-} axradio_trxstate_t;
-
-
-//! Structure containing a four byte X.25 address
-struct axradio_address {
-    uint8_t addr[4]; //!< Four byte X.25 address
-};
-
-struct axradio_address_mask {
-    uint8_t addr[4];
-    uint8_t mask[4];
-};
-
 //function declaration starts here
 uint8_t ax5043_write_reg_spi(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
 void ax5043_write_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t ret_value[]);
@@ -713,18 +650,10 @@ void ax5043_full_tx(SPIDriver * spip);
 void ax5043_reset(SPIDriver * spip);
 void ax5043_prepare_tx(SPIDriver * spip);
 void ax5043_prepare_rx(SPIDriver * spip);
-void ax5043_init_registers_common(SPIDriver * spip);
-uint8_t axradio_get_pllvcoi(SPIDriver * spip);
 
 void ax5043_init(SPIDriver * spip);
 void ax5043_transmit(SPIDriver * spip);
 void ax5043_receive(SPIDriver * spip);
-
-
-//functions added from bradenburg's code.
-uint8_t transmit_packet(SPIDriver * spip, const struct axradio_address *addr, const uint8_t *pkt, uint16_t pktlen);
-void transmit_loop(SPIDriver * spip, axradio_trxstate_t axradio_trxstate, uint16_t axradio_txbuffer_len,uint8_t axradio_txbuffer[], uint16_t axradio_txbuffer_cnt);
-void ax5043_writefifo(SPIDriver * spip,const uint8_t *ptr, uint8_t len);
 
 #endif
 //! @}

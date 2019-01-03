@@ -1,5 +1,7 @@
-# app_sx1236_ax5043_HDLC_FEC_tx
+# app_ax5043_g3ruh_ax25_aprs_tx
 
-This is used to transmit sax5043 radio packets signal.
-This creates a instruction packet at 435.5 MhZ in a fixed interval. This code simulates ground. This pairs with " app_sx1236_FulDuplex_oresat " which receives the instruction and responds with data. the sent and received packet are shown in serial terminal.
+This is used to transmit ax5043 radio g3ruh ax.25 signal.
+This creates a g3ruh packet at 435.5 MhZ in a fixed interval. This mode is suppossed to be transmitted from satellite. This pairs with " app_ax5043_g3ruh_ax25_aprs_rx " which can receive this packet. 
+
+This mode is for amatuer radio group and will not be used for ground control.
 

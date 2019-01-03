@@ -195,7 +195,46 @@ static void app_init(void)
   }*/
 
   ax5043_prepare_tx(&SPID2);
+  //ax5043_write_reg(&SPID2, AX5043_REG_MODULATION, (uint8_t)0x01, ret_value);
+  ax5043_full_tx(&SPID2);
+  //ax5043_transmit(&SPID2);
 
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
+
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)(AX5043_REPEATDATA_CMD|0x00), ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//preamble flag
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);//preamble
+
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit  
+
+/*
+  
+  // Below loop is for OOK code
+  while(true)
+  {
+  //ax5043_synth_tx(&SPID2);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
+  ax5043_standby(&SPID2);
+  ax5043_synth_tx(&SPID2);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
+  ax5043_standby(&SPID2);
+  chprintf(DEBUG_CHP, "Stop\r\n");
+  chThdSleepMilliseconds(2000);
+
+
+  ax5043_full_tx(&SPID2);
+  chprintf(DEBUG_CHP, "Start\r\n");
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)(AX5043_REPEATDATA_CMD|0x00), ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//preamble flag
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xF0, ret_value);//preamble
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit  
+
+  chThdSleepMilliseconds(2000);
+  }
+
+  //very old loop.
   while(true)
   {
     ax5043_prepare_tx(&SPID2);
@@ -204,6 +243,17 @@ static void app_init(void)
     ax5043_transmit(&SPID2);
     chThdSleepMilliseconds(1000);
     //ax5043_shutdown(&SPID2);
+  } */
+
+  while(true)
+  {
+  ax5043_standby(&SPID2);
+  ax5043_synth_tx(&SPID2);
+  chprintf(DEBUG_CHP, "Stop\r\n");
+  chThdSleepMilliseconds(2000);
+  ax5043_full_tx(&SPID2);
+  chprintf(DEBUG_CHP, "Start\r\n");
+  chThdSleepMilliseconds(2000);
   }
 
 /*
