@@ -199,25 +199,37 @@ static void app_init(void)
   ax5043_full_tx(&SPID2);
   //ax5043_transmit(&SPID2);
 
+
   ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
 
   ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)(AX5043_REPEATDATA_CMD|0x00), ret_value);
   ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//preamble flag
-  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);
-  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);//preamble
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x55, ret_value);//preamble
 
   ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit  
 
-/*
+  ax5043_standby(&SPID2);
+  chThdSleepMilliseconds(10000);
+  SetWpm(5);
+  SetMessage("KG7ZVV Malay Das testing AX5043");
+
+  while(true){  
+    SendMessage(&SPID2);
+    chThdSleepMilliseconds(5000);
+    chprintf(DEBUG_CHP, "=====================\r\n");
+  }
   
+
+  /*  
   // Below loop is for OOK code
   while(true)
   {
+
+  //ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
+  //ax5043_standby(&SPID2);
   //ax5043_synth_tx(&SPID2);
-  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
-  ax5043_standby(&SPID2);
-  ax5043_synth_tx(&SPID2);
-  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
+  //ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x03, ret_value);//FIFO reset
   ax5043_standby(&SPID2);
   chprintf(DEBUG_CHP, "Stop\r\n");
   chThdSleepMilliseconds(2000);
@@ -245,16 +257,19 @@ static void app_init(void)
     //ax5043_shutdown(&SPID2);
   } */
 
+  /*
   while(true)
   {
   ax5043_standby(&SPID2);
-  ax5043_synth_tx(&SPID2);
+  //ax5043_synth_tx(&SPID2);
   chprintf(DEBUG_CHP, "Stop\r\n");
   chThdSleepMilliseconds(2000);
   ax5043_full_tx(&SPID2);
   chprintf(DEBUG_CHP, "Start\r\n");
   chThdSleepMilliseconds(2000);
   }
+  */
+
 
 /*
   ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)AX5043_DATA_CMD, ret_value);//The data follows

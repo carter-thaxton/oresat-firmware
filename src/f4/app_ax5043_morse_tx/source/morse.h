@@ -2,6 +2,8 @@
 #ifndef _MORSE_H_
 #define _MORSE_H_
 
+#define DEBUG_SERIAL  SD2
+#define DEBUG_CHP     ((BaseSequentialStream *) &DEBUG_SERIAL)
 
 #define SPACE " "
 uint16_t ditLength;
@@ -13,13 +15,13 @@ uint16_t ditLength;
 
 
 
-void SendDot(void);
-void SendDash(void);
+void SendDot(SPIDriver * spip);
+void SendDash(SPIDriver * spip);
 void LetterSleep(void);
 void WordSleep(void);
 void ElementSleep(void);
 void SetWpm(int wpm);
 void SetMessage(char *message);
-void SendMessage(void);
+void SendMessage(SPIDriver * spip);
 
 #endif

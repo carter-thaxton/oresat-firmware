@@ -11,6 +11,7 @@ The code here refers to logic and snippets from Adam Parker - KD5OOL
 #include "chprintf.h"
 
 #include "morse.h"
+#include "ax5043.h"
 
 
 #define MAX_MESSAGE_SIZE 512
@@ -58,33 +59,52 @@ static const char *num[] = {
     "----.", //9
 };
 
-void SendDot(void)
+void SendDot(SPIDriver * spip)
 {
 
-    chThdSleepMicroseconds(DIT_MS);
+  uint8_t ret_value[3]={0,0,0};
+
+  ax5043_full_tx(spip);
+  chprintf(DEBUG_CHP, "Dot\r\n");
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)(AX5043_REPEATDATA_CMD|0x00), ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//preamble flag
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xF0, ret_value);//preamble
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit 
+  chThdSleepMilliseconds(DIT_MS);
+  ax5043_standby(spip);
 
 }
 
-void SendDash(void)
+void SendDash(SPIDriver * spip)
 {
 
-    chThdSleepMicroseconds(DASH_MS);
+  uint8_t ret_value[3]={0,0,0};
 
+  ax5043_full_tx(spip);
+  chprintf(DEBUG_CHP, "Dash\r\n");
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)(AX5043_REPEATDATA_CMD|0x00), ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0x38, ret_value);//preamble flag
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xFF, ret_value);
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFODATA, (uint8_t)0xF0, ret_value);//preamble
+  ax5043_write_reg(&SPID2, AX5043_REG_FIFOSTAT, (uint8_t)0x04, ret_value);//FIFO Commit 
+  chThdSleepMilliseconds(DASH_MS);
+  ax5043_standby(spip);
 }
 
 void LetterSleep(void)
 {
-    chThdSleepMicroseconds(LETTER_SPACE_MS);
+    chThdSleepMilliseconds(LETTER_SPACE_MS);
 }
 
 void WordSleep(void)
 {
-    chThdSleepMicroseconds(WORD_SPACE_MS);
+    chThdSleepMilliseconds(WORD_SPACE_MS);
 }
 
 void ElementSleep(void)
 {
-    chThdSleepMicroseconds(DIT_MS);
+    chThdSleepMilliseconds(DIT_MS);
 }
 
 //sets ditLength in ms
@@ -118,7 +138,7 @@ const char *AsciiToMorse(char letter)
     return SPACE;
 }
 
-void SendMessage(void)
+void SendMessage(SPIDriver * spip)
 {
     int element;
     int index = 0;
@@ -133,10 +153,10 @@ void SendMessage(void)
             switch(morse[element])
             {
             case '-':
-                SendDash();
+                SendDash(spip);
                 break;
             case '.':
-                SendDot();
+                SendDot(spip);
             }
 
             if (morse[element] == ' ')
