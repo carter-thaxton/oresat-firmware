@@ -23,13 +23,13 @@
 // physical layer from config.c file generated from radiolab
 const uint8_t axradio_phy_pn9 = 0;
 const uint8_t axradio_phy_nrchannels = 1;
-const uint32_t axradio_phy_chanfreq[1] = { 0x0912aaab };
+const uint32_t axradio_phy_chanfreq[1] = { 0x090a3d71 };
 const uint8_t axradio_phy_chanpllrnginit[1] = { 0x0a };
-const uint8_t axradio_phy_chanvcoiinit[1] = { 0x98 };
+const uint8_t axradio_phy_chanvcoiinit[1] = { 0x99 };
 uint8_t axradio_phy_chanpllrng[1];
 uint8_t axradio_phy_chanvcoi[1];
 const uint8_t axradio_phy_vcocalib = 0;
-const int32_t axradio_phy_maxfreqoffset = 913;
+const int32_t axradio_phy_maxfreqoffset = 910;
 const int8_t axradio_phy_rssioffset = 64;
 // axradio_phy_rssioffset is added to AX5043_RSSIREFERENCE and subtracted from chip RSSI value to prevent overflows (8bit RSSI only goes down to -128)
 // axradio_phy_rssioffset is also added to AX5043_RSSIABSTHR
@@ -53,7 +53,7 @@ const uint8_t axradio_framing_maclen = 0;
 const uint8_t axradio_framing_addrlen = 0;
 const uint8_t axradio_framing_destaddrpos = 0;
 const uint8_t axradio_framing_sourceaddrpos = 0xff;
-const uint8_t axradio_framing_lenpos = 2;
+const uint8_t axradio_framing_lenpos = 0;
 const uint8_t axradio_framing_lenoffs = 37;
 const uint8_t axradio_framing_lenmask = 0x00;
 const uint8_t axradio_framing_swcrclen = 0;
@@ -63,7 +63,7 @@ const uint8_t axradio_framing_syncword[] = { 0x33, 0x55, 0x33, 0x55};
 const uint8_t axradio_framing_syncflags = 0x38;
 const uint8_t axradio_framing_enable_sfdcallback = 0;
 
-const uint32_t axradio_framing_ack_timeout = 13; // 98.9ms in wtimer0 units (640Hz)
+const uint32_t axradio_framing_ack_timeout = 12; // 98.9ms in wtimer0 units (640Hz)
 const uint32_t axradio_framing_ack_delay = 313; // 1.0ms in wtimer1 units (20MHz/64)
 const uint8_t axradio_framing_ack_retransmissions = 0;
 const uint8_t axradio_framing_ack_seqnrpos = 0xff;
@@ -71,6 +71,9 @@ const uint8_t axradio_framing_ack_seqnrpos = 0xff;
 const uint8_t axradio_framing_minpayloadlen = 0; // must be set to 1 if the payload directly follows the destination address, and a CRC is configured
 //WOR
 const uint16_t axradio_wor_period = 128;
+
+
+
 
 /**
  * writes  to an AX5043 register.
@@ -173,8 +176,8 @@ uint8_t ax5043_read_reg(SPIDriver * spip, uint16_t reg, uint8_t value, uint8_t r
  * @return void 
  * TODO return a -ve return code if there are any errors
  */
-// TX: fcarrier=435.500MHz dev= 25.000kHz br=100.000kBit/s pwr= 10.0dBm
-// RX: fcarrier=435.500MHz bw=150.000kHz br=100.000kBit/s
+// TX: fcarrier=433.920MHz dev=  3.000kHz br=  9.600kBit/s pwr= 10.0dBm
+// RX: fcarrier=433.920MHz bw= 14.400kHz br=  9.600kBit/s
 void ax5043_set_regs(SPIDriver * spip)
 {
   uint8_t ret_value[3]={0,0,0};
@@ -199,7 +202,7 @@ void ax5043_set_regs(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_MAXDROFFSET0,   (uint8_t)0x00, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET2,   (uint8_t)0x80, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET1,   (uint8_t)0x01, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET0,   (uint8_t)0x30, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_MAXRFOFFSET0,   (uint8_t)0x2F, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FSKDMAX1,       (uint8_t)0x00, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FSKDMAX0,       (uint8_t)0xA6, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FSKDMIN1,       (uint8_t)0xFF, ret_value);  
@@ -232,7 +235,7 @@ void ax5043_set_regs(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND1,(uint8_t)0x0A, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_AMPLITUDEGAIN1, (uint8_t)0x06, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FREQDEV11,      (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV01,      (uint8_t)0x3C, ret_value);  
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV01,      (uint8_t)0x38, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FOURFSK1,       (uint8_t)0x16, ret_value);
   ax5043_write_reg(spip, AX5043_REG_BBOFFSRES1,     (uint8_t)0x00, ret_value);
   ax5043_write_reg(spip, AX5043_REG_AGCGAIN3,       (uint8_t)0xFF, ret_value);  
@@ -248,20 +251,20 @@ void ax5043_set_regs(SPIDriver * spip)
   ax5043_write_reg(spip, AX5043_REG_FREQUENCYGAIND3,(uint8_t)0x0D, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_AMPLITUDEGAIN3, (uint8_t)0x06, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FREQDEV13,      (uint8_t)0x00, ret_value);
-  ax5043_write_reg(spip, AX5043_REG_FREQDEV03,      (uint8_t)0x3C, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FREQDEV03,      (uint8_t)0x38, ret_value);
   ax5043_write_reg(spip, AX5043_REG_FOURFSK3,       (uint8_t)0x16, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_BBOFFSRES3,     (uint8_t)0x00, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_MODCFGF,        (uint8_t)0x00, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FSKDEV2,        (uint8_t)0x00, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_FSKDEV1,        (uint8_t)0x04, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_FSKDEV0,        (uint8_t)0x5E, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_FSKDEV0,        (uint8_t)0x19, ret_value);
   ax5043_write_reg(spip, AX5043_REG_MODCFGA,        (uint8_t)0x05, ret_value);
   ax5043_write_reg(spip, AX5043_REG_TXRATE2,        (uint8_t)0x00, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_TXRATE1,        (uint8_t)0x0D, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_TXRATE0,        (uint8_t)0x1B, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_TXPWRCOEFFB1,   (uint8_t)0x07, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_TXPWRCOEFFB0,   (uint8_t)0x00, ret_value);  
-  ax5043_write_reg(spip, AX5043_REG_PLLVCOI,        (uint8_t)0x98, ret_value);
+  ax5043_write_reg(spip, AX5043_REG_PLLVCOI,        (uint8_t)0x99, ret_value);
   ax5043_write_reg(spip, AX5043_REG_PLLRNGCLK,      (uint8_t)0x05, ret_value);
   ax5043_write_reg(spip, AX5043_REG_BBTUNE,         (uint8_t)0x0F, ret_value);  
   ax5043_write_reg(spip, AX5043_REG_BBOFFSCAP,      (uint8_t)0x77, ret_value);  
